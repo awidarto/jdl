@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+	<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+	        android:orientation="vertical"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:padding="5dp" >
+	    <TextView
+	        android:id="@+id/txtDevInfo"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:padding="2dp"
+	        android:text="Device Info :" />
+	    <Button
+	        android:id="@+id/btCrDispatch"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Courier Dispatch" />
+	    <Button
+	        android:id="@+id/btCrReturn"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Courier Return" />
+	    <Button
+	        android:id="@+id/btSync"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Synchronize" />
+	    <Button
+	        android:id="@+id/btUpdateKey"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Request Device Key" />
+	    <Button
+	        android:id="@+id/btChangePassKey"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Change Passkey" />
+	    <Button
+	        android:id="@+id/btLockAdmin"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Lock Option" />
+	    <TextView
+	        android:id="@+id/txtSendResult"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:padding="2dp"
+	        android:text="" />
+	    	</LinearLayout>
+</ScrollView>

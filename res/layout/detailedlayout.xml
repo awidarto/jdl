@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+	<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical" >
+		<FrameLayout 
+		    android:id="@+id/frameDetailPos"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentTop="true"
+		    android:background="@android:color/background_light" >
+		    <TextView
+		        android:id="@+id/txtDetailPos"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentTop="true"
+		        android:text="Current Location"
+		        android:paddingLeft="5dp"
+		        android:textColor="@android:color/black"
+		        android:textAppearance="?android:attr/textAppearanceSmall" />
+		</FrameLayout>
+	    	
+	    <TextView
+	        android:id="@+id/txtDetail"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentRight="true"
+	        android:padding="2dp"
+	        android:minLines="3"
+	        android:layout_below="@+id/frameDetailPos"
+	        android:text="Order Detail" />
+	    <ImageView
+	        android:id="@+id/imageCam"
+	        android:layout_height="100dp"
+	        android:layout_width="match_parent"
+	        android:layout_below="@+id/txtDetail" />
+	    <EditText
+	        android:id="@+id/editNote"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/imageCam"
+	        android:layout_marginTop="10dp"
+	        android:gravity="top"
+	        android:hint="@string/noteField"
+	        android:inputType="textLongMessage|textMultiLine"
+	        android:minLines="2" >
+	    </EditText>
+	
+	    <Button
+	        android:id="@+id/btPickedUp"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/editNote"
+	        android:layout_centerInParent="true"
+	        android:text="Picked Up" >
+	    </Button>
+	
+	    <Button
+	        android:id="@+id/btEnroute"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBaseline="@+id/btPickedUp"
+	        android:layout_alignBottom="@+id/btPickedUp"
+	        android:layout_centerInParent="true"
+	        android:layout_toRightOf="@+id/btPickedUp"
+	        android:text="OTW" />
+	
+	    <Button
+	        android:id="@+id/btDelivered"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBottom="@+id/btEnroute"
+	        android:layout_centerInParent="true"
+	        android:layout_toRightOf="@+id/btEnroute"
+	        android:text="Delivered" />
+	
+	    <Button
+	        android:id="@+id/btRescheduled"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/btPickedUp"
+	        android:layout_centerInParent="true"
+	        android:text="Rescheduled" />
+	
+	    <Button
+	        android:id="@+id/btRevoked"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/btRescheduled"
+	        android:layout_alignLeft="@+id/btEnroute"
+	        android:layout_centerInParent="true"
+	        android:text="Rejected" />
+	
+	    <Button
+	        android:id="@+id/btNoShow"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBaseline="@+id/btRevoked"
+	        android:layout_alignBottom="@+id/btRevoked"
+	        android:layout_alignLeft="@+id/btDelivered"
+	        android:layout_centerInParent="true"
+	        android:text="No Show" />
+	    <Button
+	        android:id="@+id/btRevoked"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBaseline="@+id/btRescheduled"
+	        android:layout_alignBottom="@+id/btRescheduled"
+	        android:layout_alignLeft="@+id/btEnroute"
+	        android:layout_centerInParent="true"
+	        android:text="Rejected" />
+	    	    
+	    <Button
+	        android:id="@+id/btDirection"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/btRescheduled"
+	        android:layout_centerInParent="true"
+	        android:text="Get Direction">
+	        <requestFocus />
+	    </Button>
+	    <Button
+	        android:id="@+id/btUpdateLoc"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/btDirection"
+	        android:layout_centerInParent="true"
+	        android:layout_toRightOf="@+id/btDirection"
+	        android:text="Get Position" />
+	        	    
+	    <Button
+	        android:id="@+id/btTakePic"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/btUpdateLoc"
+	        android:layout_centerInParent="true"
+	        android:layout_toRightOf="@+id/btUpdateLoc"
+	        android:text="Take Photo" />
+
+	    	 
+   	</RelativeLayout>    
+</ScrollView>

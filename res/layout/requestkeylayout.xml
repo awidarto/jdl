@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="5dp" >
+    <EditText
+        android:id="@+id/edReqIdentifier"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Device Identifier" >
+
+        <requestFocus />
+    </EditText>
+    <EditText
+        android:id="@+id/edAdminUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Admin Username" />
+    <EditText
+        android:id="@+id/edAdminPasskey"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Admin Passkey"
+        android:inputType="textPassword" />
+	    <Button
+	        android:id="@+id/btRequestKey"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Request Key" />
+	    <TextView
+	        android:id="@+id/txtReqResult"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="" />
+</LinearLayout>

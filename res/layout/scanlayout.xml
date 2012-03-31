@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+
+	<RelativeLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    >
+	   <FrameLayout 
+	    android:id="@+id/frameScanPos"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentTop="true"
+	    android:background="@android:color/background_light" >
+	    
+	    <TextView
+	        android:id="@+id/txtScanDetailPos"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentTop="true"
+	        android:text="Current Location"
+	        android:paddingLeft="5dp"
+	        android:textColor="@android:color/black"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />	    
+	    </FrameLayout>
+	   <FrameLayout 
+	    android:id="@+id/frameScanStatus"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	        android:layout_below="@+id/frameScanPos"
+	    android:background="@android:color/darker_gray" >
+	    
+	    <TextView
+	        android:id="@+id/txtScanStatus"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentTop="true"
+	        android:text="Ready"
+	        android:paddingLeft="5dp"
+	        android:textColor="@android:color/white"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />	    
+	    </FrameLayout>
+	       	    
+	       
+	    <TextView
+	        android:id="@+id/txtScanDetail"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentRight="true"
+	        android:layout_below="@+id/frameScanStatus"
+	        android:minLines="3"
+	        android:paddingLeft="5dp"
+	        android:text="" 
+	    />
+	    <ImageView
+	        android:id="@+id/imageScanCam"
+	        android:layout_height="100dp"
+	        android:layout_width="match_parent"
+	        android:layout_below="@+id/txtScanDetail" />
+	    <EditText
+	        android:id="@+id/editScanNote"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/imageScanCam"
+	        android:layout_marginTop="10dp"
+	        android:gravity="top"
+	        android:hint="@string/noteField"
+	        android:inputType="textLongMessage|textMultiLine"
+	        android:minLines="2" >
+	    </EditText>
+
+	    <Button
+	        android:id="@+id/btScan"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/editScanNote"
+	        android:text="Scan QR" >
+	    </Button>
+
+	    <Button
+	        android:id="@+id/btScanPickedUp"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/btScan"
+	        android:layout_centerInParent="true"
+	        android:text="Picked Up" >
+	    	
+	        <requestFocus />
+	    </Button>
+	
+	    <Button
+	        android:id="@+id/btScanEnroute"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBaseline="@+id/btScanPickedUp"
+	        android:layout_alignBottom="@+id/btScanPickedUp"
+	        android:layout_centerInParent="true"
+	        android:layout_toRightOf="@+id/btScanPickedUp"
+	        android:text="On The Way" />
+	
+	    <Button
+	        android:id="@+id/btScanDelivered"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBottom="@+id/btScanEnroute"
+	        android:layout_centerInParent="true"
+	        android:layout_toRightOf="@+id/btScanEnroute"
+	        android:text="Delivered" />
+	
+	    <Button
+	        android:id="@+id/btScanRescheduled"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/btScanPickedUp"
+	        android:layout_centerInParent="true"
+	        android:text="Rescheduled" />
+	
+	    <Button
+	        android:id="@+id/btScanRevoked"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBaseline="@+id/btScanRescheduled"
+	        android:layout_alignBottom="@+id/btScanRescheduled"
+	        android:layout_alignLeft="@+id/btScanEnroute"
+	        android:layout_centerInParent="true"
+	        android:text="Rejected" />
+	
+	    <Button
+	        android:id="@+id/btScanNoShow"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignBaseline="@+id/btScanRevoked"
+	        android:layout_alignBottom="@+id/btScanRevoked"
+	        android:layout_alignLeft="@+id/btScanDelivered"
+	        android:layout_centerInParent="true"
+	        android:text="No Show" />
+	    
+	    <Button
+	        android:id="@+id/btScanDirection"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/btScanRescheduled"
+	        android:layout_centerInParent="true"
+	        android:text="Get Direction">
+	        <requestFocus />
+	    </Button>
+	    	    
+	    <Button
+	        android:id="@+id/btScanUpdateLoc"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/btScanDirection"
+	        android:layout_toRightOf="@+id/btScanDirection"
+	        android:text="Get Position" />
+	    
+	    <Button
+	        android:id="@+id/btScanTakePic"
+	        android:layout_width="110dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignTop="@+id/btScanUpdateLoc"
+	        android:layout_toRightOf="@+id/btScanUpdateLoc"
+	        android:text="Take Picture" />
+	    
+	    
+	    
+	</RelativeLayout>
+    
+</ScrollView>

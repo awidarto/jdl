@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="5dp" >
+
+    <TextView  
+        android:id="@+id/txtdeliveryid"
+
+        android:layout_width="fill_parent"
+        android:layout_height="26dip" 
+        android:singleLine="false"
+        android:ellipsize="marquee"
+        android:text="@+id/txt_deliveryid" />
+
+    <Button
+        android:id="@+id/btSendPickup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Picked Up" />
+
+    <Button
+        android:id="@+id/btEnroute"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="On The Way" />
+    <Button
+        android:id="@+id/btSendDelivered"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Delivered" />
+    <Button
+        android:id="@+id/btUpdateKey"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Rejected" />
+    <Button
+        android:id="@+id/btSync"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Reschedule" />
+    <Button
+        android:id="@+id/btSync"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="No Show" />
+
+    <EditText
+        android:id="@+id/txtNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:hint="Note" >
+
+        <requestFocus />
+    </EditText>
+
+</LinearLayout>
+

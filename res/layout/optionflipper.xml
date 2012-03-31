@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+<ViewFlipper
+    android:id="@+id/optionFlipper"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+	<LinearLayout
+	    	android:id="@+id/mainOption"
+	        android:orientation="vertical"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:padding="5dp" >
+	    <Button
+	        android:id="@+id/btSync"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Synchronize" />
+	    <Button
+	        android:id="@+id/btUpdateKey"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Update Key" />
+	    <Button
+	        android:id="@+id/btLockAdmin"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Lock Option" />
+	</LinearLayout>
+	<LinearLayout
+	   	android:id="@+id/getDataOption"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:padding="5dp"
+	    android:orientation="vertical" >
+	
+	    <TextView
+	        android:id="@+id/textView1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Please pick date to sync :"
+	        android:padding="5dp"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	
+	    <DatePicker
+	        android:id="@+id/datePicker"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingTop="20dp"
+	        android:paddingBottom="20dp" />
+	
+	    <Button
+	        android:id="@+id/btGetData"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:padding="5dp"
+	        android:text="Retrieve Data" />
+	    <Button
+	        android:id="@+id/btUploadData"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:padding="5dp"
+	        android:text="Send Report" />
+	
+	    <TextView
+	        android:id="@+id/txtNetResult"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:singleLine="false"
+	        android:text="Sync ready." />
+	</LinearLayout>
+</ViewFlipper>
+</LinearLayout>

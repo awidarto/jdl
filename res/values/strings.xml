@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, JayonMobileActivity!</string>
+    <string name="app_name">JayonMobile</string>
+    <string name="api_url">http://50.31.253.7/jayonadmin/api/v1/</string>
+    <string name="api_get_data">syncdata/</string>
+    <string name="api_get_key">mobkey/</string>
+    <string name="api_put_data">syncreport/</string>
+    <string name="api_put_loc">locpost/</string>
+    <string name="api_put_status">statpost/</string>
+    <string name="api_key">cf3eb111e44ecdfa18b94b50323738c40b89d717</string>
+    <string name="master_key">7e931g6628S59A0sJ4pYVqAjdo0v66Wb</string>
+    <string name="pass_key">98765</string>
+    <string name="dev_identifier">JY-000</string>
+    <string name="noteField">Note</string>
+    <string name="delivery_id">Delivery ID</string>
+    <string name="transaction_id">Transaction ID</string>
+    <string name="merchant">Merchant</string>
+    <string name="recipient">Recipient</string>
+    <string name="shipping">Deliver To</string>
+    <string name="cost">Cost</string>
+        
+</resources>

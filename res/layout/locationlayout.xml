@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+	android:orientation="vertical"
+    android:padding="0dp" >
+	<com.google.android.maps.MapView
+	    android:id="@+id/map"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:clickable="true"
+		android:paddingBottom="50dp"
+  		android:apiKey="0jIoY8HjzBr23C8VRiWOw9SE00yJSWOTrsXVAIA" />
+
+	<Button
+        android:id="@+id/btReportLocation"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+    	android:layout_alignParentBottom="true"
+        android:text="Report Position" />
+
+    <Button
+        android:id="@+id/btMyPosition"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btReportLocation"
+        android:text="My Position" />
+	<FrameLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentTop="true"
+	    android:background="@android:color/background_light" >
+	    <TextView
+	        android:id="@+id/txtCurrentLoc"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentTop="true"
+	        android:text="Current Location"
+	        android:paddingLeft="5dp"
+	        android:textColor="@android:color/black"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+	</FrameLayout>
+
+	<CheckBox
+	    android:id="@+id/checkForceGps"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/btMyPosition"
+	    android:layout_alignParentLeft="true"
+	    android:textColor="@android:color/black"
+	    android:text="Use GPS" />
+
+	<CheckBox
+	    android:id="@+id/checkSatView"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/checkForceGps"
+	    android:layout_alignParentLeft="true"
+	    android:textColor="@android:color/black"
+	    android:text="Sat View" />
+
+</RelativeLayout>
