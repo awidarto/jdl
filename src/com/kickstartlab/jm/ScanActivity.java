@@ -104,6 +104,7 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 			displayPhoto(imagefile);
 		}
         
+        jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
         
         locman = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         

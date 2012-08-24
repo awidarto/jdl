@@ -47,6 +47,17 @@ public class JayonDbHelper extends SQLiteOpenHelper{
 
 	public static final String COLUMN_RESCHEDULE_REF = "res_ref";
 	public static final String COLUMN_REVOKE_REF = "rev_ref";
+	
+	public static final String LOG_ID = "_id";
+	public static final String LOG_SYNC_ID = "sync_id";
+	public static final String LOG_CAPTURE_TIME = "capture_time";
+	public static final String LOG_REPORT_TIME = "report_time";
+	public static final String LOG_DELIVERY_ID = "delivery_id";
+	public static final String LOG_TRANS_ID = "merchant_trans_id";
+	public static final String LOG_STATUS = "status";
+	public static final String LOG_NOTE = "delivery_note";
+	public static final String LOG_LAT = "latitude";
+	public static final String LOG_LON = "longitude";
 
 
 	private static final String DATABASE_NAME = "jayonmobile.db";
@@ -87,8 +98,9 @@ public class JayonDbHelper extends SQLiteOpenHelper{
 			  + "`dl_lon` TEXT NULL,"
 			  + "`res_ref` TEXT NULL,"
 			  + "`rev_ref` TEXT NULL"
-			+");"
-			+ "create table "
+			+");";
+	private static final String LOG_CREATE =		  
+			"create table "
 			+ TABLE_LOGS + "( "
 			+ "`_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
 			+ "`sync_id` TEXT NULL,"
@@ -109,6 +121,7 @@ public class JayonDbHelper extends SQLiteOpenHelper{
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(DATABASE_CREATE);
+		db.execSQL(LOG_CREATE);
 	}
 
 	@Override

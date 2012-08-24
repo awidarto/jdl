@@ -68,12 +68,15 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1337;
     private SharedPreferences jexPrefs;
 	private ProgressDialog dialog;
+	LogDataSource logdatasource = new LogDataSource(this);
+	Integer sync_id;
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         OrderDataSource ordersource = new OrderDataSource(this);
         ordersource.open();
+        logdatasource.open();
 
         jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
         
@@ -88,7 +91,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         Button btDelivered = (Button) findViewById(R.id.btDelivered);
         Button btPickedUp = (Button) findViewById(R.id.btPickedUp);
         Button btRescheduled = (Button) findViewById(R.id.btRescheduled);
-        Button btRevoked = (Button) findViewById(R.id.btRevoked);
+        Button btRevoked = (Button) findViewById(R.id.btDeliRevoked);
         Button btEnroute = (Button) findViewById(R.id.btEnroute);
         Button btNoShow = (Button) findViewById(R.id.btNoShow);    
         Button btDirection = (Button) findViewById(R.id.btDirection);
@@ -105,6 +108,8 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 	        .append(order.getMcTransId()).append("\n")
 	        .append(getResources().getText(R.string.merchant) + " : ")
 	        .append(order.getMcName()).append("\n")
+	        .append(getResources().getText(R.string.delivery_status) + " : ")
+	        .append(order.getStatus()).append("\n")
 	        .append(getResources().getText(R.string.shipping) + " :\n")
 	        .append(order.getRecipient()).append("\n")
 	        .append(order.getShipAddr()).append("\n")
@@ -129,7 +134,11 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         btPosition.setOnClickListener(this);
         btTakePic.setOnClickListener(this);
         
+        btTakePic.setEnabled(false);
+        
         locman = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        
+        sync_id = jexPrefs.getInt("syncsession",1);
         
         provider = locman.getBestProvider(criteria, false);
 		locman.requestLocationUpdates(provider, 400, 1, this);
@@ -179,7 +188,8 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			case R.id.btRescheduled:
 				sendstatus.execute(new String[]{delivery_id, "rescheduled"});
 				break;
-			case R.id.btRevoked:
+			case R.id.btDeliRevoked:
+				Log.i("CLICKID",v.toString());
 				sendstatus.execute(new String[]{delivery_id, "revoked"});
 				break;
 			case R.id.btUpdateLoc:
@@ -331,7 +341,20 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			}catch(Exception e){
 				e.printStackTrace();
 			}
+			
+			LogData logdata = new LogData();
+			Integer sync_id = jexPrefs.getInt("syncsession",1);
+			
+			logdata.setStatus(params[1]);
+			logdata.setDeliveryId(params[0]);
+			logdata.setDeliveryNote(editNote.getText().toString());
+			logdata.setSyncId(sync_id.toString());
+			logdata.setLatitude(latitude);
+			logdata.setLongitude(longitude);
+			
+			logdatasource.saveLog(logdata);
 			// TODO Auto-generated method stub
+			
 			return txtResult;
 		}
 
@@ -341,7 +364,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			if(result.indexOf("OK:") > 0){					
 				Toast.makeText(DeliveryDetailActivity.this,"Order status updated", Toast.LENGTH_LONG).show();
 			}
-			
+						
 			dialog.dismiss();
 			
 		}

@@ -26,7 +26,8 @@ public class OrderDataSource {
 			JayonDbHelper.COLUMN_COD_COST,
 			JayonDbHelper.COLUMN_COD_CURR,
 			JayonDbHelper.COLUMN_ASSIGNED_DATE,
-			JayonDbHelper.COLUMN_ASSIGNED_TIMESLOT
+			JayonDbHelper.COLUMN_ASSIGNED_TIMESLOT,
+			JayonDbHelper.COLUMN_DELIVERY_STATUS
 		};
 	
 	public OrderDataSource(Context context) {
@@ -43,6 +44,13 @@ public class OrderDataSource {
 	
 	public void emptyData(){
 		database.delete(JayonDbHelper.TABLE_ORDERS, "1", null);
+	}
+	
+	public Integer updateStatus(String order_id,String status){
+		ContentValues args = new ContentValues();
+		args.put(JayonDbHelper.COLUMN_DELIVERY_STATUS, status);
+		Integer result = database.update(JayonDbHelper.TABLE_ORDERS, args, JayonDbHelper.COLUMN_ORDER_ID +"=?", new String[] { order_id });
+		return result;
 	}
 
 	public void saveOrderJSON(JSONObject jsonObj){
@@ -113,6 +121,7 @@ public class OrderDataSource {
 		        order.setRecipient(cursor.getString(7));
 		        order.setCODCost(cursor.getString(8));
 		        order.setCODCurr(cursor.getString(9));
+		        order.setStatus(cursor.getString(10));
 		        cursor.close();
 		        return order;
 			}else{

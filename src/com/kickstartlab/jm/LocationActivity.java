@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -64,6 +65,7 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
     Drawable redPoint;
     CheckBox chkUseGps,chkSatView;
     Criteria criteria = new Criteria();
+    private SharedPreferences jexPrefs;
 	private ProgressDialog dialog;
 	
     public void onCreate(Bundle savedInstanceState) {
@@ -119,6 +121,8 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
         mapoverlays.clear();
         mapoverlays.add(itemoverlay);
 
+        jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
+        
         locman = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         provider = locman.getBestProvider(criteria, false);
         locman.getLastKnownLocation(provider);
@@ -171,11 +175,11 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
 	}
 
 	
-	private class SendStatusProcess extends AsyncTask<Location, Void, String>{
+	public class SendStatusProcess extends AsyncTask<Location, Void, String>{
 
 		@Override
 		protected String doInBackground(Location... params) {
-			String key = getResources().getText(R.string.api_key).toString();
+			String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
 			String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_put_loc).toString() + key;
 			String txtResult = "";
 			Location loc = params[0];
@@ -195,7 +199,7 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
 				postjson.put(json);
 				
 				List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
-				nameValuePairs.add(new BasicNameValuePair("trx", json.toString()));
+				nameValuePairs.add(new BasicNameValuePair("loc", json.toString()));
 				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs)); 
 
 				// Execute HTTP Post Request

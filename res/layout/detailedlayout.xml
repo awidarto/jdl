@@ -110,7 +110,7 @@
 	        android:layout_centerInParent="true"
 	        android:text="No Show" />
 	    <Button
-	        android:id="@+id/btRevoked"
+	        android:id="@+id/btDeliRevoked"
 	        android:layout_width="110dp"
 	        android:layout_height="wrap_content"
 	        android:layout_alignBaseline="@+id/btRescheduled"

@@ -20,5 +20,6 @@
     <string name="recipient">Recipient</string>
     <string name="shipping">Deliver To</string>
     <string name="cost">Cost</string>
+    <string name="delivery_status">Status</string>
         
 </resources>
