@@ -6,7 +6,7 @@
 
 	<RelativeLayout
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
+	    android:layout_height="wrap_content"
 	    >
 	   <FrameLayout 
 	    android:id="@+id/frameScanPos"
@@ -19,8 +19,7 @@
 	        android:id="@+id/txtScanDetailPos"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentTop="true"
-	        android:text="Current Location"
+	        android:text="@string/currentloc"
 	        android:paddingLeft="5dp"
 	        android:textColor="@android:color/black"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />	    
@@ -36,8 +35,7 @@
 	        android:id="@+id/txtScanStatus"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentTop="true"
-	        android:text="Ready"
+	        android:text="@string/ready"
 	        android:paddingLeft="5dp"
 	        android:textColor="@android:color/white"
 	        android:textAppearance="?android:attr/textAppearanceMedium" />	    
@@ -59,7 +57,8 @@
 	        android:id="@+id/imageScanCam"
 	        android:layout_height="100dp"
 	        android:layout_width="match_parent"
-	        android:layout_below="@+id/txtScanDetail" />
+	        android:layout_below="@+id/txtScanDetail" 
+	        android:contentDescription="@string/recieverphoto" />
 	    <EditText
 	        android:id="@+id/editScanNote"
 	        android:layout_width="match_parent"
@@ -79,7 +78,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/editScanNote"
-	        android:text="Scan QR" >
+	        android:text="@string/scancode" >
 	    </Button>
 
 	    <Button
@@ -89,7 +88,7 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/btScan"
 	        android:layout_centerInParent="true"
-	        android:text="Picked Up" >
+	        android:text="@string/pickedup" >
 	    	
 	        <requestFocus />
 	    </Button>
@@ -102,7 +101,7 @@
 	        android:layout_alignBottom="@+id/btScanPickedUp"
 	        android:layout_centerInParent="true"
 	        android:layout_toRightOf="@+id/btScanPickedUp"
-	        android:text="On The Way" />
+	        android:text="@string/enroute" />
 	
 	    <Button
 	        android:id="@+id/btScanDelivered"
@@ -111,7 +110,7 @@
 	        android:layout_alignBottom="@+id/btScanEnroute"
 	        android:layout_centerInParent="true"
 	        android:layout_toRightOf="@+id/btScanEnroute"
-	        android:text="Delivered" />
+	        android:text="@string/delivered" />
 	
 	    <Button
 	        android:id="@+id/btScanRescheduled"
@@ -120,7 +119,7 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/btScanPickedUp"
 	        android:layout_centerInParent="true"
-	        android:text="Rescheduled" />
+	        android:text="@string/rescheduled" />
 	
 	    <Button
 	        android:id="@+id/btScanRevoked"
@@ -130,7 +129,7 @@
 	        android:layout_alignBottom="@+id/btScanRescheduled"
 	        android:layout_alignLeft="@+id/btScanEnroute"
 	        android:layout_centerInParent="true"
-	        android:text="Rejected" />
+	        android:text="@string/revoked" />
 	
 	    <Button
 	        android:id="@+id/btScanNoShow"
@@ -140,7 +139,7 @@
 	        android:layout_alignBottom="@+id/btScanRevoked"
 	        android:layout_alignLeft="@+id/btScanDelivered"
 	        android:layout_centerInParent="true"
-	        android:text="No Show" />
+	        android:text="@string/noshow" />
 	    
 	    <Button
 	        android:id="@+id/btScanDirection"
@@ -149,7 +148,7 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/btScanRescheduled"
 	        android:layout_centerInParent="true"
-	        android:text="Get Direction">
+	        android:text="@string/getdirection">
 	        <requestFocus />
 	    </Button>
 	    	    
@@ -159,7 +158,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignTop="@+id/btScanDirection"
 	        android:layout_toRightOf="@+id/btScanDirection"
-	        android:text="Get Position" />
+	        android:text="@string/getloc" />
 	    
 	    <Button
 	        android:id="@+id/btScanTakePic"
@@ -167,7 +166,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignTop="@+id/btScanUpdateLoc"
 	        android:layout_toRightOf="@+id/btScanUpdateLoc"
-	        android:text="Take Picture" />
+	        android:text="@string/takepic" />
 	    
 	    
 	    

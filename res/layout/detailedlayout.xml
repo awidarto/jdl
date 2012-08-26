@@ -6,7 +6,7 @@
     >
 	<RelativeLayout
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
+	    android:layout_height="wrap_content"
 	    android:orientation="vertical" >
 		<FrameLayout 
 		    android:id="@+id/frameDetailPos"
@@ -18,8 +18,7 @@
 		        android:id="@+id/txtDetailPos"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_alignParentTop="true"
-		        android:text="Current Location"
+		        android:text="@string/currentloc"
 		        android:paddingLeft="5dp"
 		        android:textColor="@android:color/black"
 		        android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -34,12 +33,13 @@
 	        android:padding="2dp"
 	        android:minLines="3"
 	        android:layout_below="@+id/frameDetailPos"
-	        android:text="Order Detail" />
+	        android:text="@string/orderdetail" />
 	    <ImageView
 	        android:id="@+id/imageCam"
 	        android:layout_height="100dp"
 	        android:layout_width="match_parent"
-	        android:layout_below="@+id/txtDetail" />
+	        android:layout_below="@+id/txtDetail"
+	        android:contentDescription="@string/recieverphoto" />
 	    <EditText
 	        android:id="@+id/editNote"
 	        android:layout_width="match_parent"
@@ -60,7 +60,7 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/editNote"
 	        android:layout_centerInParent="true"
-	        android:text="Picked Up" >
+	        android:text="@string/pickedup" >
 	    </Button>
 	
 	    <Button
@@ -71,7 +71,7 @@
 	        android:layout_alignBottom="@+id/btPickedUp"
 	        android:layout_centerInParent="true"
 	        android:layout_toRightOf="@+id/btPickedUp"
-	        android:text="OTW" />
+	        android:text="@string/enroute" />
 	
 	    <Button
 	        android:id="@+id/btDelivered"
@@ -80,7 +80,7 @@
 	        android:layout_alignBottom="@+id/btEnroute"
 	        android:layout_centerInParent="true"
 	        android:layout_toRightOf="@+id/btEnroute"
-	        android:text="Delivered" />
+	        android:text="@string/delivered" />
 	
 	    <Button
 	        android:id="@+id/btRescheduled"
@@ -89,26 +89,18 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/btPickedUp"
 	        android:layout_centerInParent="true"
-	        android:text="Rescheduled" />
+	        android:text="@string/rescheduled" />
 	
-	    <Button
-	        android:id="@+id/btRevoked"
-	        android:layout_width="110dp"
-	        android:layout_height="wrap_content"
-	        android:layout_alignTop="@+id/btRescheduled"
-	        android:layout_alignLeft="@+id/btEnroute"
-	        android:layout_centerInParent="true"
-	        android:text="Rejected" />
+
 	
 	    <Button
 	        android:id="@+id/btNoShow"
 	        android:layout_width="110dp"
 	        android:layout_height="wrap_content"
-	        android:layout_alignBaseline="@+id/btRevoked"
-	        android:layout_alignBottom="@+id/btRevoked"
+	        android:layout_alignBottom="@+id/btDeliRevoked"
 	        android:layout_alignLeft="@+id/btDelivered"
 	        android:layout_centerInParent="true"
-	        android:text="No Show" />
+	        android:text="@string/noshow" />
 	    <Button
 	        android:id="@+id/btDeliRevoked"
 	        android:layout_width="110dp"
@@ -117,7 +109,7 @@
 	        android:layout_alignBottom="@+id/btRescheduled"
 	        android:layout_alignLeft="@+id/btEnroute"
 	        android:layout_centerInParent="true"
-	        android:text="Rejected" />
+	        android:text="@string/revoked" />
 	    	    
 	    <Button
 	        android:id="@+id/btDirection"
@@ -126,7 +118,7 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/btRescheduled"
 	        android:layout_centerInParent="true"
-	        android:text="Get Direction">
+	        android:text="@string/getdirection">
 	        <requestFocus />
 	    </Button>
 	    <Button
@@ -136,7 +128,7 @@
 	        android:layout_alignTop="@+id/btDirection"
 	        android:layout_centerInParent="true"
 	        android:layout_toRightOf="@+id/btDirection"
-	        android:text="Get Position" />
+	        android:text="@string/getloc" />
 	        	    
 	    <Button
 	        android:id="@+id/btTakePic"
@@ -145,7 +137,7 @@
 	        android:layout_alignTop="@+id/btUpdateLoc"
 	        android:layout_centerInParent="true"
 	        android:layout_toRightOf="@+id/btUpdateLoc"
-	        android:text="Take Photo" />
+	        android:text="@string/takepic" />
 
 	    	 
    	</RelativeLayout>    

@@ -6,17 +6,14 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View;
-import android.view.Window;
 
 public class PassKeyDialog extends Dialog implements android.view.View.OnClickListener{
-	private String name;
 	public static EditText inPassKey;
 	public String passkey;
 	OnPassKeyResult mDialogResult;
 	
 	public PassKeyDialog(Context context,String name) {
 		super(context);
-		this.name = name;
 	}
 	
 

@@ -1,10 +1,8 @@
 package com.kickstartlab.jm;
 
-import android.R.bool;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TabActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -24,7 +22,7 @@ public class JayonMobileActivity extends TabActivity {
     private AlarmManager alarmManager;
 	private Intent alarmintent;
 	private PendingIntent pendingIntent;
-    private Integer repeated = 10;
+    private Integer repeated = 60 * 10;
 	private final long REPEAT_TIME = 1000 * 10;
 	
     @Override

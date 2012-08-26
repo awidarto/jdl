@@ -11,14 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -49,7 +47,7 @@ import android.widget.Toast;
 public class ScanActivity extends Activity implements OnClickListener,LocationListener {
 	TextView txtResult;
 	Button scanPackage;
-	private String delivery_id,sendResult = "";
+	private String delivery_id;
 	EditText editNote;
 	LocationManager locman;
 	String provider;
@@ -64,6 +62,9 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
     OrderDataSource ordersource = new OrderDataSource(this);
     Order order = new Order();
 	private ProgressDialog dialog;
+	LogDataSource logdatasource = new LogDataSource(this);
+	LogData lastlog = new LogData();
+	String last;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +103,8 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 		File file = new File(imagefile);		
 		if(file.exists()){
 			displayPhoto(imagefile);
+		}else{
+			imagecam.setVisibility(View.GONE);
 		}
         
         jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
@@ -142,9 +145,9 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 		    	//imagecam.setImageBitmap(thumbnail);
 		        //use imageUri here to access the image
 		    } else if (resultCode == RESULT_CANCELED) {
-		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT);
+		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT).show();
 		    } else {
-		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT);
+		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT).show();
 		    }
 		}
 
@@ -154,7 +157,6 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 				String result = intent.getStringExtra("SCAN_RESULT");
 				String[] resultsplit = result.split("\\|");
 				delivery_id = resultsplit[0];
-				String trx_id = resultsplit[1];
 				//do not forget this ! open your datasource
 		        ordersource.open();
 
@@ -164,6 +166,14 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 		            txtResult.setText(delivery_id);
 		            txtScanStatus.setText("No Match");
 		        }else{
+		    		try {
+		    			lastlog = logdatasource.getLogData(delivery_id);
+		    			last = lastlog.getStatus();			
+		    		} catch (Exception e) {
+		    			last = "new";
+		    			e.printStackTrace();
+		    		}
+		    		/*
 		            StringBuilder order_info = new StringBuilder()
 		        	.append(getResources().getText(R.string.delivery_id) + " :\n")
 			        .append(delivery_id).append("\n")
@@ -175,6 +185,20 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 			        .append(order.getRecipient()).append("\n")
 			        .append(order.getShipAddr()).append("\n")
 			        .append("Billing : ").append(order.getCODCurr()).append(" ").append(order.getCODCost());
+		            */
+		            StringBuilder order_info = new StringBuilder()
+		        	.append(getResources().getText(R.string.delivery_id) + " :\n")
+			        .append(delivery_id).append("\n")
+			        .append(getResources().getText(R.string.transaction_id).toString() + " :\n")
+			        .append(order.getMcTransId()).append("\n")
+			        .append(getResources().getText(R.string.merchant) + " : ")
+			        .append(order.getMcName()).append("\n")
+			        .append(getResources().getText(R.string.delivery_status) + " : ")
+			        .append(last).append("\n")
+			        .append(getResources().getText(R.string.shipping) + " :\n")
+			        .append(order.getRecipient()).append("\n")
+			        .append(order.getShipAddr()).append("\n")
+			        .append("Billing : ").append(order.getCODCurr()).append(" ").append(order.getCODCost());		            
 		        
 		            txtResult.setText(order_info);
 		            txtScanStatus.setText("Match Found");
@@ -253,7 +277,39 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 		}
 		
 	}
+	
+	public boolean disableByStatus(String last, String status){		
 
+		Boolean result = true;
+
+		if(last.equalsIgnoreCase("enroute")){
+			if(status.equalsIgnoreCase("pickedup")){
+				result = false;
+			}else{
+				result = true;
+			}
+		}
+
+		if(last.equalsIgnoreCase("delivered") || last.equalsIgnoreCase("noshow") || last.equalsIgnoreCase("revoked") || last.equalsIgnoreCase("rescheduled")){
+			if(status.equalsIgnoreCase("pickedup") || status.equalsIgnoreCase("enroute") 
+					|| status.equalsIgnoreCase("delivered")
+					|| status.equalsIgnoreCase("noshow")
+					|| status.equalsIgnoreCase("revoked")
+					|| status.equalsIgnoreCase("rescheduled")){
+				result = false;
+			}else{
+				result = true;
+			}
+		}
+		
+		if(last.equalsIgnoreCase(status)){
+			result = false;
+		}
+		
+		return result;
+				
+	}
+	
 	private void displayPhoto(String imagefile){
         FileInputStream in;
         BufferedInputStream buf;

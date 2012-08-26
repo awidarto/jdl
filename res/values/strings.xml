@@ -21,5 +21,19 @@
     <string name="shipping">Deliver To</string>
     <string name="cost">Cost</string>
     <string name="delivery_status">Status</string>
-        
+    <string name="delivered">Delivered</string>
+    <string name="pickedup">Picked Up</string>
+    <string name="noshow">No Show</string>
+    <string name="enroute">OTW</string>
+    <string name="revoked">Rejected</string>
+    <string name="rescheduled">Rescheduled</string>
+    <string name="takepic">Take Picture</string>
+    <string name="getdirection">Get Direction</string>
+    <string name="currentloc">Current Location</string>
+    <string name="orderdetail">Order Detail</string>
+    <string name="getloc">Get Position</string>
+    <string name="scancode">Scan QR</string>
+    <string name="ready">Ready</string>
+    <string name="recieverphoto">Reciever Photo</string>
+    
 </resources>

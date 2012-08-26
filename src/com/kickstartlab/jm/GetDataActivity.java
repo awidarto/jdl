@@ -8,14 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -67,9 +65,6 @@ public class GetDataActivity extends Activity implements OnClickListener{
 		StringBuilder datepicked = null;
 		datepicked = new StringBuilder().append(datePicker.getYear()).append('-').append(datePicker.getMonth() + 1).append('-').append(datePicker.getDayOfMonth());			
 
-		JSONObject jsonObj = null;
-		JSONArray jsonDataArray = null;
-		
 		switch(v.getId()){
 		case R.id.btGetData:
 			GetOrderDataProcess ord = new GetOrderDataProcess();
@@ -128,8 +123,6 @@ public class GetDataActivity extends Activity implements OnClickListener{
 			String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
 			String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_get_data).toString() + key + "/" + datepicked;
 			String txtResult = "";
-			String lat,lon = "";
-			
 			Log.i("syncUrl",url);
 			
 			HttpClient httpclient = new DefaultHttpClient();

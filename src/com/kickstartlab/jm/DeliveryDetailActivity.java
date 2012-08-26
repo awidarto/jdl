@@ -4,36 +4,29 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Criteria;
@@ -55,7 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class DeliveryDetailActivity extends Activity implements OnClickListener,LocationListener{
-	private String delivery_id,sendResult = "";
+	private String delivery_id;
 	private EditText editNote;
 	LocationManager locman;
 	String provider;
@@ -68,9 +61,11 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1337;
     private SharedPreferences jexPrefs;
 	private ProgressDialog dialog;
-	LogDataSource logdatasource = new LogDataSource(this);
 	Integer sync_id;
-    
+	LogDataSource logdatasource = new LogDataSource(this);
+	LogData lastlog = new LogData();
+	String last;
+	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -100,7 +95,15 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         
         Order order = ordersource.getOrder(delivery_id);
         ordersource.close();
-        
+
+		try {
+			lastlog = logdatasource.getLogData(delivery_id);
+			last = lastlog.getStatus();			
+		} catch (Exception e) {
+			last = "new";
+			e.printStackTrace();
+		}
+		        
         StringBuilder order_info = new StringBuilder()
         	.append(getResources().getText(R.string.delivery_id) + " :\n")
 	        .append(delivery_id).append("\n")
@@ -109,7 +112,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 	        .append(getResources().getText(R.string.merchant) + " : ")
 	        .append(order.getMcName()).append("\n")
 	        .append(getResources().getText(R.string.delivery_status) + " : ")
-	        .append(order.getStatus()).append("\n")
+	        .append(last).append("\n")
 	        .append(getResources().getText(R.string.shipping) + " :\n")
 	        .append(order.getRecipient()).append("\n")
 	        .append(order.getShipAddr()).append("\n")
@@ -122,6 +125,8 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		File file = new File(imagefile);		
 		if(file.exists()){
 			displayPhoto(imagefile);
+		}else{
+			imagecam.setVisibility(View.GONE);
 		}
 		
         btDelivered.setOnClickListener(this);
@@ -134,7 +139,15 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         btPosition.setOnClickListener(this);
         btTakePic.setOnClickListener(this);
         
-        btTakePic.setEnabled(false);
+        //btTakePic.setEnabled(false);
+
+        btDelivered.setEnabled(disableByStatus(last,"delivered"));
+        btEnroute.setEnabled(disableByStatus(last,"enroute"));
+        btNoShow.setEnabled(disableByStatus(last,"noshow"));
+        btPickedUp.setEnabled(disableByStatus(last,"pickedup"));
+        btRescheduled.setEnabled(disableByStatus(last,"rescheduled"));
+        btRevoked.setEnabled(disableByStatus(last,"revoked"));
+        
         
         locman = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         
@@ -230,6 +243,44 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		
 	}
 	
+	public String getCurrentDate(){
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+		Date date = new Date();
+		return dateFormat.format(date);
+	}
+	
+	public boolean disableByStatus(String last, String status){
+		
+		Boolean result = true;
+
+		if(last.equalsIgnoreCase("enroute")){
+			if(status.equalsIgnoreCase("pickedup")){
+				result = false;
+			}else{
+				result = true;
+			}
+		}
+
+		if(last.equalsIgnoreCase("delivered") || last.equalsIgnoreCase("noshow") || last.equalsIgnoreCase("revoked") || last.equalsIgnoreCase("rescheduled")){
+			if(status.equalsIgnoreCase("pickedup") || status.equalsIgnoreCase("enroute") 
+					|| status.equalsIgnoreCase("delivered")
+					|| status.equalsIgnoreCase("noshow")
+					|| status.equalsIgnoreCase("revoked")
+					|| status.equalsIgnoreCase("rescheduled")){
+				result = false;
+			}else{
+				result = true;
+			}
+		}
+		
+		if(last.equalsIgnoreCase(status)){
+			result = false;
+		}
+		
+		return result;
+				
+	}
+	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -257,9 +308,9 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		    	//imagecam.setImageBitmap(thumbnail);
 		        //use imageUri here to access the image
 		    } else if (resultCode == RESULT_CANCELED) {
-		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT);
+		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT).show();
 		    } else {
-		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT);
+		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT).show();
 		    }
 		}
 	}	
@@ -347,6 +398,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			
 			logdata.setStatus(params[1]);
 			logdata.setDeliveryId(params[0]);
+			logdata.setCaptureTime(getCurrentDate());
 			logdata.setDeliveryNote(editNote.getText().toString());
 			logdata.setSyncId(sync_id.toString());
 			logdata.setLatitude(latitude);

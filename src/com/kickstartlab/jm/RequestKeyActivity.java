@@ -8,14 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -35,9 +33,7 @@ import android.widget.Toast;
 public class RequestKeyActivity extends Activity implements OnClickListener{
 	private TextView txtReqResult;
 	private EditText edDeviceIdentifier, edAdminPasskey,edAdminUsername;
-	private String sendResult = "";	
-
-    private SharedPreferences jexPrefs;
+	private SharedPreferences jexPrefs;
 	private SharedPreferences.Editor edit; 
 	
 	private ProgressDialog dialog;
@@ -85,11 +81,9 @@ public class RequestKeyActivity extends Activity implements OnClickListener{
 
 		@Override
 		protected String doInBackground(Void... params) {
-			String key = getResources().getText(R.string.api_key).toString();
+			getResources().getText(R.string.api_key).toString();
 			String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_get_key).toString() +'/'+getResources().getText(R.string.master_key).toString();
 			String txtResult = "";
-			String lat,lon = "";
-			
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost(url);
 			JSONObject json = new JSONObject();

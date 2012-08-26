@@ -60,23 +60,26 @@ public class LogDataSource {
 			String[] projArgs = new String[]{
 					delivery_id	
 				};
-			Cursor cursor = database.query(JayonDbHelper.TABLE_LOGS, allLogColumns, JayonDbHelper.LOG_DELIVERY_ID  + "= ?" , projArgs , null, null,null,"1");
+			
+			String orderby = JayonDbHelper.LOG_CAPTURE_TIME + " DESC";
+			
+			Cursor cursor = database.query(JayonDbHelper.TABLE_LOGS, allLogColumns, JayonDbHelper.LOG_DELIVERY_ID  + "= ?" , projArgs , null, null,orderby,"1");
 
 			Log.i("RowCnt", String.valueOf(cursor.getCount()));
 			if(cursor.getCount() == 1){
 				cursor.moveToPosition(0);
 				LogData logdata = new LogData();
 				
-		        logdata.setId(cursor.getLong(1));
-		        logdata.setSyncId(cursor.getString(2));
-		        logdata.setCaptureTime(cursor.getString(3));
-		        logdata.setReportTime(cursor.getString(4));
-		        logdata.setDeliveryId(cursor.getString(5));
-		        logdata.setMcTransId(cursor.getString(6));
-		        logdata.setStatus(cursor.getString(7));
-		        logdata.setDeliveryNote(cursor.getString(8));
-		        logdata.setLongitude(cursor.getString(9));
-		        logdata.setLatitude(cursor.getString(10));
+		        logdata.setId(cursor.getLong(0));
+		        logdata.setSyncId(cursor.getString(1));
+		        logdata.setCaptureTime(cursor.getString(2));
+		        logdata.setReportTime(cursor.getString(3));
+		        logdata.setDeliveryId(cursor.getString(4));
+		        logdata.setMcTransId(cursor.getString(5));
+		        logdata.setStatus(cursor.getString(6));
+		        logdata.setDeliveryNote(cursor.getString(7));
+		        logdata.setLongitude(cursor.getString(8));
+		        logdata.setLatitude(cursor.getString(9));
 		        
 		        cursor.close();
 		        return logdata;

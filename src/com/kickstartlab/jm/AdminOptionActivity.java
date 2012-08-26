@@ -45,7 +45,6 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
 	protected TextView deviceinfo,txtSendResult;
 
     private SharedPreferences jexPrefs;
-	private SharedPreferences.Editor edit;
 	private ProgressDialog dialog;
 	
 	
@@ -256,8 +255,6 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
 		//String key = getResources().getText(R.string.api_key).toString();
 		String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_put_status).toString() + key;
 		String txtResult = "";
-		String lat,lon = "";
-		
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost(url);
 		JSONObject json = new JSONObject();

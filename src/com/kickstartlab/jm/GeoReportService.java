@@ -22,11 +22,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -34,8 +32,9 @@ public class GeoReportService extends Service{
 	String TAG = "GeoReportService";
     private SharedPreferences jexPrefs;
 	LocationManager locman;
+	Location rloc;
 	String provider;
-    Criteria criteria = new Criteria();
+    Criteria criteria = new Criteria();  
 
 	/* (non-Javadoc)
 	 * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
@@ -44,83 +43,82 @@ public class GeoReportService extends Service{
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "GeoReportService");
 		//return super.onStartCommand(intent, flags, startId);
-		
-        locman = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        provider = locman.getBestProvider(criteria, false);
-        locman.getLastKnownLocation(provider);
 
-        jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
-        
-		final String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
-		final String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_put_loc).toString() + key;
-		//String txtResult = "";
-
-		Location rloc = locman.getLastKnownLocation(provider);
-		
-		final String lat = Double.toString(rloc.getLatitude());
-		final String lon = Double.toString(rloc.getLongitude());
-		
-		Log.i(TAG,lat +","+lon);		
-		
 		if(checkConnection() == 1){
-			new Thread() {
-				public void run() {
-					HttpClient httpclient = new DefaultHttpClient();
-					HttpPost httppost = new HttpPost(url);
-					JSONObject json = new JSONObject();
-					try {
-						json.put("key", key);
-						json.put("lat", lat);
-						json.put("lon", lon);
+	        jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
+	        
+			final String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
+			final String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_put_loc).toString() + key;
 
-						JSONArray postjson = new JSONArray();
-						postjson.put(json);
+			try {
+				locman = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+				provider = locman.getBestProvider(criteria, false);
+				rloc = locman.getLastKnownLocation(provider);			
 
-						List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
-						nameValuePairs.add(new BasicNameValuePair("loc", json.toString()));
-						httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				final String lat = Double.toString(rloc.getLatitude());
+				final String lon = Double.toString(rloc.getLongitude());
 
-						// Execute HTTP Post Request
-						//System.out.print(json);
-						HttpResponse response = httpclient.execute(httppost);
+				Log.i(TAG,lat +","+lon);	
+				
+				new Thread() {
+					public void run() {
+						HttpClient httpclient = new DefaultHttpClient();
+						HttpPost httppost = new HttpPost(url);
+						JSONObject json = new JSONObject();
+						try {
+							json.put("key", key);
+							json.put("lat", lat);
+							json.put("lon", lon);
 
-						// for JSON:
-						if (response != null) {
-							InputStream is = response.getEntity().getContent();
+							JSONArray postjson = new JSONArray();
+							postjson.put(json);
 
-							BufferedReader reader = new BufferedReader(
-									new InputStreamReader(is));
-							StringBuilder sb = new StringBuilder();
+							List<BasicNameValuePair> nameValuePairs = new ArrayList<BasicNameValuePair>(1);
+							nameValuePairs.add(new BasicNameValuePair("loc", json.toString()));
+							httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-							String line = null;
-							try {
-								while ((line = reader.readLine()) != null) {
-									sb.append(line + "\n");
-								}
-							} catch (IOException e) {
-								e.printStackTrace();
-							} finally {
+							// Execute HTTP Post Request
+							//System.out.print(json);
+							HttpResponse response = httpclient.execute(httppost);
+
+							// for JSON:
+							if (response != null) {
+								InputStream is = response.getEntity().getContent();
+
+								BufferedReader reader = new BufferedReader(
+										new InputStreamReader(is));
+								StringBuilder sb = new StringBuilder();
+
+								String line = null;
 								try {
-									is.close();
+									while ((line = reader.readLine()) != null) {
+										sb.append(line + "\n");
+									}
 								} catch (IOException e) {
 									e.printStackTrace();
+								} finally {
+									try {
+										is.close();
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
 								}
+								//txtResult = sb.toString();
 							}
-							//txtResult = sb.toString();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
-				}
-			}.start();			
+				}.start();			
+			
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			
 		}else{
 			Log.i(TAG,"Disconnected");
 		}
-		
-
 		return 1;
-
-		
 	}
 
 	/* (non-Javadoc)
