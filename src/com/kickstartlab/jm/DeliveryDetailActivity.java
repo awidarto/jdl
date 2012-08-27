@@ -202,7 +202,6 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 				sendstatus.execute(new String[]{delivery_id, "rescheduled"});
 				break;
 			case R.id.btDeliRevoked:
-				Log.i("CLICKID",v.toString());
 				sendstatus.execute(new String[]{delivery_id, "revoked"});
 				break;
 			case R.id.btUpdateLoc:
@@ -392,6 +391,8 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			}catch(Exception e){
 				e.printStackTrace();
 			}
+			
+			
 			
 			LogData logdata = new LogData();
 			Integer sync_id = jexPrefs.getInt("syncsession",1);
