@@ -59,12 +59,22 @@
 	        android:layout_width="match_parent"
 	        android:layout_below="@+id/txtScanDetail" 
 	        android:contentDescription="@string/recieverphoto" />
+
+	    <Button
+	        android:id="@+id/btScanUploadPic"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/imageScanCam"
+	        android:layout_centerInParent="true"
+	        android:text="@string/uploadpic" >
+	    </Button>
+	    	    	    
 	    <EditText
 	        android:id="@+id/editScanNote"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/imageScanCam"
+	        android:layout_below="@+id/btScanUploadPic"
 	        android:layout_marginTop="10dp"
 	        android:gravity="top"
 	        android:hint="@string/noteField"

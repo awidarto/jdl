@@ -53,19 +53,63 @@ public class LogDataSource {
 		database.insert(JayonDbHelper.TABLE_LOGS, null, val);
 	}
 	
-	public LogData getLogData(String delivery_id){
-		Log.i("InDeliID", delivery_id);
+	public LogData getLogDataOnStatus(String delivery_id, String status){
+		Log.i("LogInDeliID", delivery_id);
 		try{
-			Log.i("ProjDeliID", delivery_id);
+			Log.i("LogProjDeliID", delivery_id);
+			String[] projArgs = new String[]{
+					status,
+					delivery_id
+				};
+			
+			String orderby = JayonDbHelper.LOG_CAPTURE_TIME + " DESC";
+			
+			Cursor cursor = database.query(JayonDbHelper.TABLE_LOGS, allLogColumns, JayonDbHelper.LOG_STATUS +" = ? AND " +JayonDbHelper.LOG_DELIVERY_ID  + "= ?" , projArgs , null, null,orderby,"1");
+
+			Log.i("RowCnt", String.valueOf(cursor.getCount()));
+			if(cursor.getCount() == 1){
+				cursor.moveToPosition(0);
+				LogData logdata = new LogData();
+				
+		        logdata.setId(cursor.getLong(0));
+		        logdata.setSyncId(cursor.getString(1));
+		        logdata.setCaptureTime(cursor.getString(2));
+		        logdata.setReportTime(cursor.getString(3));
+		        logdata.setDeliveryId(cursor.getString(4));
+		        logdata.setMcTransId(cursor.getString(5));
+		        logdata.setStatus(cursor.getString(6));
+		        logdata.setDeliveryNote(cursor.getString(7));
+		        logdata.setLongitude(cursor.getString(8));
+		        logdata.setLatitude(cursor.getString(9));
+		        
+		        cursor.close();
+		        return logdata;
+			}else{
+		        cursor.close();
+				return null;
+			}
+		}catch(SQLException e){
+			e.printStackTrace();
+			return null;
+        }catch(NullPointerException e){
+        	e.printStackTrace();
+        	return null;
+        }
+	}	
+	
+	public LogData getLogData(String delivery_id){
+		Log.i("LogInDeliID", delivery_id);
+		try{
+			Log.i("LogProjDeliID", delivery_id);
 			String[] projArgs = new String[]{
 					delivery_id	
 				};
 			
 			String orderby = JayonDbHelper.LOG_CAPTURE_TIME + " DESC";
 			
-			Cursor cursor = database.query(JayonDbHelper.TABLE_LOGS, allLogColumns, JayonDbHelper.LOG_DELIVERY_ID  + "= ?" , projArgs , null, null,orderby,"1");
+			Cursor cursor = database.query(JayonDbHelper.TABLE_LOGS, allLogColumns, JayonDbHelper.LOG_STATUS +" <> 'upload_pic' AND " +JayonDbHelper.LOG_DELIVERY_ID  + "= ?" , projArgs , null, null,orderby,"1");
 
-			Log.i("RowCnt", String.valueOf(cursor.getCount()));
+			Log.i("LogRowCnt", String.valueOf(cursor.getCount()));
 			if(cursor.getCount() == 1){
 				cursor.moveToPosition(0);
 				LogData logdata = new LogData();

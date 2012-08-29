@@ -1,5 +1,10 @@
 package com.kickstartlab.jm;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TabActivity;
@@ -8,6 +13,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
@@ -23,7 +29,8 @@ public class JayonMobileActivity extends TabActivity {
 	private Intent alarmintent;
 	private PendingIntent pendingIntent;
     private Integer repeated = 60 * 10;
-	private final long REPEAT_TIME = 1000 * 10;
+    
+    private static final String DATABASE_NAME = "jayonmobile.db";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,18 +52,19 @@ public class JayonMobileActivity extends TabActivity {
         Intent intent2 = new Intent(this, LocationActivity.class );
         spec2.setContent(intent2);
         tabHost.addTab(spec2);
-
+        /*
         TabSpec spec3 = tabHost.newTabSpec("scan");
         spec3.setIndicator("Scan");
         Intent intent3 = new Intent(this, ScanActivity.class );
         spec3.setContent(intent3);
         tabHost.addTab(spec3);
-
+		*/
         TabSpec spec4 = tabHost.newTabSpec("options");
         spec4.setIndicator("Options");
         Intent intent4 = new Intent(this, AdminOptionActivity.class );
         spec4.setContent(intent4);
         tabHost.addTab(spec4);
+        
         tabHost.setCurrentTab(0);
         
         if(isFirstRun()){
@@ -71,8 +79,12 @@ public class JayonMobileActivity extends TabActivity {
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
     	alarmintent = new Intent(this,GeoReporter.class);    	
     	pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 234324243, alarmintent, 0);
-		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis() + (repeated * 1000), REPEAT_TIME, pendingIntent);			
 
+    	long alarminterval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+    	long firsttrigger = System.currentTimeMillis() + (alarminterval / 15 );
+    	
+    	alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,firsttrigger, alarminterval, pendingIntent);			
+    	//alarmManager.set
 		IntentFilter connfilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
 		registerReceiver(networkStateReceiver, connfilter);
 		
@@ -88,8 +100,16 @@ public class JayonMobileActivity extends TabActivity {
     	alarmManager.cancel(pendingIntent);
     	this.unregisterReceiver(georeporter);
     	this.unregisterReceiver(networkStateReceiver);
+    	
+        File source =  new File("data/data/com.kickstartlab.jm/databases/" + DATABASE_NAME);
+        File dest =  new File(Environment.getExternalStorageDirectory() + "/" + DATABASE_NAME);
+        
+        extractDb(source,dest);
+        
     	super.onDestroy();
     }    
+    
+    
     
     @Override
     protected void onPause(){
@@ -117,5 +137,36 @@ public class JayonMobileActivity extends TabActivity {
     	editor.putInt("syncsession",sync_id);    	
     	editor.commit();
     }
+
+
+    public static void extractDb(File sourceFile, File destFile) {
+    	
+	    FileChannel source = null;
+	    FileChannel destination = null;
+
+        try {
+            if (!destFile.exists()) {
+                destFile.createNewFile();
+            }
+
+        source = new FileInputStream(sourceFile).getChannel();
+        destination = new FileOutputStream(destFile).getChannel();
+        destination.transferFrom(source, 0, source.size());
+
+        } catch (Exception e) {
+        	e.printStackTrace();
+        } finally {
+        try {
+                if (source != null) {
+                    source.close();
+                }
+                if (destination != null) {
+                    destination.close();
+                }
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+        }
+    }    
     
 }

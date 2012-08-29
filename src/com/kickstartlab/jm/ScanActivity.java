@@ -2,34 +2,46 @@ package com.kickstartlab.jm;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -47,13 +59,13 @@ import android.widget.Toast;
 public class ScanActivity extends Activity implements OnClickListener,LocationListener {
 	TextView txtResult;
 	Button scanPackage;
-	private String delivery_id;
+	private String delivery_id = "";
 	EditText editNote;
 	LocationManager locman;
 	String provider;
 	Uri imageUri;
 	ImageView imagecam;
-	Bitmap bitmap;
+	Bitmap bitmap,upimage;
 	String latitude,longitude, altitude;
     Criteria criteria = new Criteria();
     TextView txtDeliveryPos,txtScanStatus;
@@ -62,9 +74,14 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
     OrderDataSource ordersource = new OrderDataSource(this);
     Order order = new Order();
 	private ProgressDialog dialog;
+	Integer sync_id;	
 	LogDataSource logdatasource = new LogDataSource(this);
 	LogData lastlog = new LogData();
-	String last;
+	String last = "";
+	private static final int UPLOAD_DIALOG_ID = 2;
+	String imagefile;
+    FileInputStream in;
+    BufferedInputStream buf;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +102,7 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
         Button btDirection = (Button) findViewById(R.id.btScanDirection);
         Button btPosition = (Button)findViewById(R.id.btScanUpdateLoc);
         Button btTakePic = (Button) findViewById(R.id.btScanTakePic);
+        Button btScanUploadPic = (Button) findViewById(R.id.btScanUploadPic);
 
         btDelivered.setOnClickListener(this);
         btEnroute.setOnClickListener(this);
@@ -95,17 +113,18 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
         btDirection.setOnClickListener(this);
         btPosition.setOnClickListener(this);
         btTakePic.setOnClickListener(this);
-        
+        btScanUploadPic.setOnClickListener(this);
         scanPackage.setOnClickListener(this);
         
         //Log.i("Delivery_id",delivery_id);
-		String imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
-		File file = new File(imagefile);		
-		if(file.exists()){
-			displayPhoto(imagefile);
-		}else{
+		//imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
+		//File file = new File(imagefile);		
+		//if(file.exists()){
+		//	displayPhoto(imagefile);
+		//}else{
 			imagecam.setVisibility(View.GONE);
-		}
+			btScanUploadPic.setVisibility(View.GONE);
+		//}
         
         jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
         
@@ -128,12 +147,13 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 						bitmap.recycle();
 					}
 					
-					String imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
+					imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
 					
 					File file = new File(imagefile);
 					
 					if(file.exists()){
 						displayPhoto(imagefile);
+						showDialog(UPLOAD_DIALOG_ID);
 					}
 					
 				}catch(NullPointerException e){
@@ -159,13 +179,17 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 				delivery_id = resultsplit[0];
 				//do not forget this ! open your datasource
 		        ordersource.open();
+		        logdatasource.open();
 
 		        Order order = ordersource.getOrder(delivery_id);
+
+	        	Log.i("ID from scan",delivery_id);
 		        
 		        if(order == null){
 		            txtResult.setText(delivery_id);
 		            txtScanStatus.setText("No Match");
 		        }else{
+
 		    		try {
 		    			lastlog = logdatasource.getLogData(delivery_id);
 		    			last = lastlog.getStatus();			
@@ -173,19 +197,7 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 		    			last = "new";
 		    			e.printStackTrace();
 		    		}
-		    		/*
-		            StringBuilder order_info = new StringBuilder()
-		        	.append(getResources().getText(R.string.delivery_id) + " :\n")
-			        .append(delivery_id).append("\n")
-			        .append(getResources().getText(R.string.transaction_id).toString() + " :\n")
-			        .append(order.getMcTransId()).append("\n")
-			        .append(getResources().getText(R.string.merchant) + " : ")
-			        .append(order.getMcName()).append("\n")
-			        .append(getResources().getText(R.string.shipping) + " :\n")
-			        .append(order.getRecipient()).append("\n")
-			        .append(order.getShipAddr()).append("\n")
-			        .append("Billing : ").append(order.getCODCurr()).append(" ").append(order.getCODCost());
-		            */
+
 		            StringBuilder order_info = new StringBuilder()
 		        	.append(getResources().getText(R.string.delivery_id) + " :\n")
 			        .append(delivery_id).append("\n")
@@ -202,6 +214,15 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 		        
 		            txtResult.setText(order_info);
 		            txtScanStatus.setText("Match Found");
+
+		            imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
+					
+					File file = new File(imagefile);
+					
+					if(file.exists()){
+						displayPhoto(imagefile);
+					}
+		            
 		        }
 		        ordersource.close();
 		        				
@@ -271,12 +292,54 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 				//Toast.makeText(this, saved_file, Toast.LENGTH_LONG).show();
 				startActivityForResult(cameraIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 				break;
+			case R.id.btUploadPic:
+				imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
+				
+				File cfile = new File(imagefile);		
+				
+				if(cfile.exists()){
+					uploadPhoto(imagefile);
+				}else{
+					Toast.makeText(this, "Photo not found", Toast.LENGTH_SHORT).show();
+				}
+				break;
 			default:
 				Toast.makeText(this, "None to Do", Toast.LENGTH_SHORT).show();
 				break;
 		}
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateDialog(int)
+	 */
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		// TODO Auto-generated method stub
+		//return super.onCreateDialog(id);
+		Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.uploadtitle);
+        builder.setMessage(R.string.uploadconfirm);
+        
+        builder.setPositiveButton(android.R.string.ok, 
+        		new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						uploadPhoto(imagefile);
+						//Toast.makeText(getApplicationContext(), "Ok !", Toast.LENGTH_SHORT).show();
+					}
+				});
+
+        builder.setNegativeButton(android.R.string.no, 
+        		new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Toast.makeText(getApplicationContext(), "No !", Toast.LENGTH_SHORT).show();
+					}
+				});
+        
+        return builder.create();				
+	}	
 	
 	public boolean disableByStatus(String last, String status){		
 
@@ -309,10 +372,13 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 		return result;
 				
 	}
+
+	private void uploadPhoto(String imagefile){
+		UploadPicture uploadpicture = new UploadPicture();
+		uploadpicture.execute(new String[]{delivery_id, imagefile});
+	}
 	
 	private void displayPhoto(String imagefile){
-        FileInputStream in;
-        BufferedInputStream buf;
         try {
        	    in = new FileInputStream(imagefile);
             buf = new BufferedInputStream(in);
@@ -410,6 +476,127 @@ public class ScanActivity extends Activity implements OnClickListener,LocationLi
 		
 	}
 
+	private class UploadPicture extends AsyncTask<String,Void,String>{
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
+			String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_upload_pic).toString() + key;
+			String txtResult = "";
+			
+			if(checkConnection() == 1){
+				HttpClient httpclient = new DefaultHttpClient();
+				HttpPost httppost = new HttpPost(url);
+				
+				try{
+					//compress image first
+					Bitmap bm = BitmapFactory.decodeFile(params[1]);				
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		            bm.compress(CompressFormat.JPEG, 25, bos);
+		            byte[] bdata = bos.toByteArray();
+		            ByteArrayBody bbody = new ByteArrayBody(bdata, delivery_id +".jpg");
+					
+					MultipartEntity entity = new MultipartEntity();
+					entity.addPart("delivery_id", new StringBody(params[0]));
+					entity.addPart("receiverpic", bbody);
+					httppost.setEntity(entity);
+					
+					// Execute HTTP Post Request
+					//System.out.print(json);
+					HttpResponse response = httpclient.execute(httppost);
+
+					// for JSON:
+					if(response != null)
+					{
+						InputStream is = response.getEntity().getContent();
+
+						BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+						StringBuilder sb = new StringBuilder();
+
+						String line = null;
+						try {
+							while ((line = reader.readLine()) != null) {
+								sb.append(line + "\n");
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						} finally {
+							try {
+								is.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						txtResult = sb.toString();
+					}				
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				
+			}else{
+				txtResult = "Connection Lost";
+			}
+
+			return txtResult;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			Log.i("JSONResult",result);
+			if(result.indexOf("OK:") > 0){					
+
+				LogData logdata = new LogData();
+				Integer sync_id = jexPrefs.getInt("syncsession",1);
+				
+				logdata.setStatus("upload_pic");
+				logdata.setDeliveryId(delivery_id);
+				logdata.setCaptureTime(getCurrentDate());
+				logdata.setDeliveryNote("Picture Uploaded");
+				logdata.setSyncId(sync_id.toString());
+				logdata.setLatitude(latitude);
+				logdata.setLongitude(longitude);
+				
+				logdatasource.saveLog(logdata);
+				
+				Toast.makeText(ScanActivity.this,"Picture uploaded", Toast.LENGTH_LONG).show();
+			}
+						
+			dialog.dismiss();
+			
+		}
+
+		@Override
+		protected void onPreExecute() {
+			dialog.setMessage("Uploading picture");
+			dialog.show();
+		}		
+	}
+
+	private int checkConnection(){
+		ConnectivityManager connect =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+		Integer result = 1;
+		
+		if ( connect.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED ||
+			connect.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTING ||
+			connect.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING ||
+			connect.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ) {
+			result = 1;
+			
+		} else if ( connect.getNetworkInfo(0).getState() == NetworkInfo.State.DISCONNECTED ||
+			connect.getNetworkInfo(1).getState() == NetworkInfo.State.DISCONNECTED  ) {
+			result = 0;
+		}
+
+		return result;
+	}	
+	
+	public String getCurrentDate(){
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
+		Date date = new Date();
+		return dateFormat.format(date);
+	}
+	
 	@Override
 	public void onLocationChanged(Location location) {
 		latitude = Double.toString(location.getLatitude());

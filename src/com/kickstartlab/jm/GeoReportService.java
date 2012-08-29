@@ -107,6 +107,8 @@ public class GeoReportService extends Service{
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
+						} finally {
+							stopSelf();
 						}
 					}
 				}.start();			
@@ -118,7 +120,7 @@ public class GeoReportService extends Service{
 		}else{
 			Log.i(TAG,"Disconnected");
 		}
-		return 1;
+		return Service.START_NOT_STICKY;
 	}
 
 	/* (non-Javadoc)
