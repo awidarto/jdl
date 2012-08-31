@@ -6,14 +6,15 @@
     <string name="api_url">http://50.31.253.7/jayonadmin/api/v1/</string>
     <string name="api_get_data">syncdata/</string>
     <string name="api_get_key">mobkey/</string>
-    <string name="api_put_data">syncreport/</string>
+    <string name="api_put_data">syncdata/</string>
+    <string name="api_put_log">syncreport/</string>
     <string name="api_put_loc">locpost/</string>
     <string name="api_put_status">statpost/</string>
     <string name="api_upload_pic">uploadpic/</string>
-    <string name="api_key">cf3eb111e44ecdfa18b94b50323738c40b89d717</string>
+    <string name="api_key">3781b5d3de50580c414cb313797bf8b1ad236518</string>
     <string name="master_key">7e931g6628S59A0sJ4pYVqAjdo0v66Wb</string>
     <string name="pass_key">98765</string>
-    <string name="dev_identifier">JY-000</string>
+    <string name="dev_identifier">JY-DEV</string>
     <string name="noteField">Note</string>
     <string name="delivery_id">Delivery ID</string>
     <string name="transaction_id">Transaction ID</string>
@@ -42,5 +43,24 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_delivery_detail">DeliveryDetailActivity</string>
+    <string name="myloc">My Position</string>
+    <string name="reportloc">Report Position</string>
+    <string name="satview">Sat View</string>
+    <string name="usegps">Use GPS</string>
+    <string name="notnow">Not Now</string>
+    <string name="deviceinfo">Device Info</string>
+    
+    <string name="departed">Courier Dispatch</string>
+    <string name="returned">Courier Return</string>
+    <string name="syncin">Download Order</string>
+    <string name="syncout">Upload Report</string>
+    <string name="syncpic">Upload Photos</string>
+    <string name="reqdevkey">Request Device Key</string>
+    <string name="changepass">Change Passkey</string>
+    <string name="lockopt">Lock Option</string>
+    
+    <string name="adminname">Administrator Username</string>
+    <string name="adminpass">Administrator Password</string>
+    <string name="devidentifier">Device Identifier</string>
 
 </resources>

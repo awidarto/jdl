@@ -57,6 +57,7 @@ public class DeliveryListActivity extends Activity implements OnItemClickListene
         //setListAdapter(adapter);
         list.setAdapter(adapter);
         cursor.close();
+        ordersource.close();
     }
     
 
@@ -69,6 +70,7 @@ public class DeliveryListActivity extends Activity implements OnItemClickListene
         Cursor cursor = ordersource.getAllOrders();        
         adapter.changeCursor(cursor);
         adapter.notifyDataSetChanged();
+        ordersource.close();
 	}
 
 

@@ -5,9 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 
+import com.kickstartlab.jm.PassKeyDialog.OnPassKeyResult;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TabActivity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -15,10 +19,11 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
 
-public class JayonMobileActivity extends TabActivity {
+public class JayonMobileActivity extends TabActivity implements OnTabChangeListener,OnCancelListener{
     /** Called when the activity is first created. */
 	SharedPreferences jexPrefs;
 	SharedPreferences.Editor editor;
@@ -29,7 +34,13 @@ public class JayonMobileActivity extends TabActivity {
 	private Intent alarmintent;
 	private PendingIntent pendingIntent;
     private Integer repeated = 60 * 10;
-    
+    private String passkey;
+	private int currentTab = 0;
+
+	protected PassKeyDialog passdialog;
+	private Boolean login = false;
+	TabHost tabHost;
+	
     private static final String DATABASE_NAME = "jayonmobile.db";
 	
     @Override
@@ -39,7 +50,7 @@ public class JayonMobileActivity extends TabActivity {
         
         jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
         
-        TabHost tabHost = getTabHost();
+        tabHost = getTabHost();
         
         TabSpec spec1 = tabHost.newTabSpec("deliveries");        
         spec1.setIndicator("Orders");
@@ -65,7 +76,9 @@ public class JayonMobileActivity extends TabActivity {
         spec4.setContent(intent4);
         tabHost.addTab(spec4);
         
-        tabHost.setCurrentTab(0);
+        tabHost.setCurrentTab(currentTab);
+        
+        tabHost.setOnTabChangedListener(this);
         
         if(isFirstRun()){
         	setPrefDefaults();
@@ -89,6 +102,26 @@ public class JayonMobileActivity extends TabActivity {
 		registerReceiver(networkStateReceiver, connfilter);
 		
 		Toast.makeText(this, "Alarm set in " + repeated + " seconds", Toast.LENGTH_LONG).show();
+		
+        passdialog = new PassKeyDialog(JayonMobileActivity.this,"passkeydialog");
+    	passdialog.setDialogResult(new OnPassKeyResult() {						
+    		@Override
+    		public void finish(String result) {
+    			// TODO Auto-generated method stub
+    	        passkey = jexPrefs.getString("passkey", "98765");
+    			if(result.toString().equalsIgnoreCase(passkey)){
+    				currentTab = tabHost.getCurrentTab();
+    				Toast.makeText(JayonMobileActivity.this, "Passkey granted", Toast.LENGTH_SHORT).show();					
+    			}else{
+    				login = false;
+    				tabHost.setCurrentTab(currentTab);
+    				Toast.makeText(JayonMobileActivity.this, "Invalid passkey", Toast.LENGTH_SHORT).show();					
+    			}
+    		}
+    	});
+    	
+    	passdialog.setOnCancelListener(this);
+		
 
 
     }
@@ -167,6 +200,30 @@ public class JayonMobileActivity extends TabActivity {
             	e.printStackTrace();
             }
         }
-    }    
+    }
+
+
+
+	@Override
+	public void onTabChanged(String tabId) {
+		if(tabId == "options"){
+			if(login == false){
+				passdialog.show();
+			}
+		}else{
+			login = false;
+			currentTab = tabHost.getCurrentTab();
+		}
+		
+	}
+
+
+
+	@Override
+	public void onCancel(DialogInterface dialog) {
+		// TODO Auto-generated method stub
+		login = false;
+		tabHost.setCurrentTab(currentTab);
+	}    
     
 }

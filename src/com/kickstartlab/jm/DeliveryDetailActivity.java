@@ -78,6 +78,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 	String last;
 	private static final int UPLOAD_DIALOG_ID = 2;
 	String imagefile;
+	Button btUploadPic;
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +106,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         Button btDirection = (Button) findViewById(R.id.btDirection);
         Button btPosition = (Button)findViewById(R.id.btUpdateLoc);
         Button btTakePic = (Button) findViewById(R.id.btTakePic);
-        Button btUploadPic = (Button) findViewById(R.id.btUploadPic);
+        btUploadPic = (Button) findViewById(R.id.btUploadPic);
         
         Order order = ordersource.getOrder(delivery_id);
         ordersource.close();
@@ -116,6 +117,8 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		} catch (Exception e) {
 			last = "new";
 			e.printStackTrace();
+		}finally{
+			logdatasource.close();
 		}
 		        
         StringBuilder order_info = new StringBuilder()
@@ -141,6 +144,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		File file = new File(imagefile);		
 		
 		if(file.exists()){
+			Toast.makeText(this, "Photo found", Toast.LENGTH_SHORT).show();
 			displayPhoto(imagefile);
 		}else{
 			imagecam.setVisibility(View.GONE);
@@ -294,11 +298,11 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 					}
 				});
 
-        builder.setNegativeButton(android.R.string.no, 
+        builder.setNegativeButton(R.string.notnow, 
         		new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						Toast.makeText(getApplicationContext(), "No !", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getApplicationContext(), "Picture will be uploaded later, you may use Upload button under the picture.", Toast.LENGTH_SHORT).show();
 					}
 				});
         
@@ -359,6 +363,8 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 					
 					if(file.exists()){
 						displayPhoto(imagefile);
+						imagecam.setVisibility(View.VISIBLE);
+						btUploadPic.setVisibility(View.VISIBLE);
 						showDialog(UPLOAD_DIALOG_ID);
 					}
 					
@@ -390,7 +396,15 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
        	    in = new FileInputStream(imagefile);
             buf = new BufferedInputStream(in);
             bitmap = BitmapFactory.decodeStream(buf);
+            
+            int nwidth = bitmap.getWidth()/2;
+            int nheight = bitmap.getHeight()/2;
+          
+            //Half Scaled
+            bitmap = Bitmap.createScaledBitmap(bitmap,nwidth, nheight, false);
+                        
             imagecam.setImageBitmap(bitmap);
+                        
             if (in != null) {
             	in.close();
             }
@@ -411,6 +425,9 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
 			String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_put_status).toString() + key;
 			String txtResult = "";
+			Integer sync_id = jexPrefs.getInt("syncsession",1);
+			
+			String now = getCurrentDate();
 			
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost(url);
@@ -418,10 +435,12 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			try{
 				json.put("status", params[1]);
 				json.put("delivery_id", params[0]);
+				json.put("capture_time", now);
 				json.put("notes", editNote.getText());
 				json.put("key", key);
 				json.put("lat", latitude);
 				json.put("lon", longitude);
+				json.put("sync_id", sync_id);
 
 				JSONArray postjson=new JSONArray();
 				postjson.put(json);
@@ -465,18 +484,18 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			
 			
 			LogData logdata = new LogData();
-			Integer sync_id = jexPrefs.getInt("syncsession",1);
 			
 			logdata.setStatus(params[1]);
 			logdata.setDeliveryId(params[0]);
-			logdata.setCaptureTime(getCurrentDate());
+			logdata.setCaptureTime(now);
 			logdata.setDeliveryNote(editNote.getText().toString());
 			logdata.setSyncId(sync_id.toString());
 			logdata.setLatitude(latitude);
 			logdata.setLongitude(longitude);
 			
+			logdatasource.open();
 			logdatasource.saveLog(logdata);
-			// TODO Auto-generated method stub
+			logdatasource.close();
 			
 			return txtResult;
 		}
@@ -504,7 +523,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 
 		@Override
 		protected String doInBackground(String... params) {
-			// TODO Auto-generated method stub
+
 			String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
 			String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_upload_pic).toString() + key;
 			String txtResult = "";
@@ -581,7 +600,9 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 				logdata.setLatitude(latitude);
 				logdata.setLongitude(longitude);
 				
+				logdatasource.open();
 				logdatasource.saveLog(logdata);
+				logdatasource.close();
 				
 				Toast.makeText(DeliveryDetailActivity.this,"Picture uploaded", Toast.LENGTH_LONG).show();
 			}
@@ -617,7 +638,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 	
 	@Override
 	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
+
 		latitude = Double.toString(location.getLatitude());
 		longitude = Double.toString(location.getLongitude());
 		txtDeliveryPos.setText("Loc : " + latitude +","+longitude);
@@ -625,19 +646,16 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
 		Toast.makeText(this, "Disabled provider " + provider,Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
 		Toast.makeText(this, "Activate provider " + provider,Toast.LENGTH_SHORT).show();				
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
 		
 	}
 

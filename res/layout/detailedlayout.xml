@@ -31,7 +31,8 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_alignParentRight="true"
 	        android:padding="2dp"
-	        android:minLines="3"
+	        android:minLines="2"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:layout_below="@+id/frameDetailPos"
 	        android:text="@string/orderdetail" />
 	    <ImageView
@@ -46,6 +47,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_below="@+id/imageCam"
 	        android:layout_centerInParent="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="@string/uploadpic" >
 	    </Button>
 	    	    
@@ -69,6 +71,7 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/editNote"
 	        android:layout_centerInParent="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="@string/pickedup" >
 	    </Button>
 	
@@ -80,6 +83,7 @@
 	        android:layout_alignBottom="@+id/btPickedUp"
 	        android:layout_centerInParent="true"
 	        android:layout_toRightOf="@+id/btPickedUp"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="@string/enroute" />
 	
 	    <Button
@@ -89,6 +93,7 @@
 	        android:layout_alignBottom="@+id/btEnroute"
 	        android:layout_centerInParent="true"
 	        android:layout_toRightOf="@+id/btEnroute"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="@string/delivered" />
 	
 	    <Button
@@ -98,6 +103,7 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/btPickedUp"
 	        android:layout_centerInParent="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="@string/rescheduled" />
 	
 
@@ -109,6 +115,7 @@
 	        android:layout_alignBottom="@+id/btDeliRevoked"
 	        android:layout_alignLeft="@+id/btDelivered"
 	        android:layout_centerInParent="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="@string/noshow" />
 	    <Button
 	        android:id="@+id/btDeliRevoked"
@@ -118,6 +125,7 @@
 	        android:layout_alignBottom="@+id/btRescheduled"
 	        android:layout_alignLeft="@+id/btEnroute"
 	        android:layout_centerInParent="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="@string/revoked" />
 	    	    
 	    <Button
@@ -127,6 +135,7 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/btRescheduled"
 	        android:layout_centerInParent="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="@string/getdirection">
 	        <requestFocus />
 	    </Button>
@@ -136,6 +145,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignTop="@+id/btDirection"
 	        android:layout_centerInParent="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:layout_toRightOf="@+id/btDirection"
 	        android:text="@string/getloc" />
 	        	    
@@ -145,8 +155,10 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignTop="@+id/btUpdateLoc"
 	        android:layout_centerInParent="true"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:layout_toRightOf="@+id/btUpdateLoc"
-	        android:text="@string/takepic" />
+	        android:text="@string/takepic"
+		 />
 
 	    	 
    	</RelativeLayout>    

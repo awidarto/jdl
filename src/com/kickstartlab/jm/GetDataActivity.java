@@ -47,12 +47,10 @@ public class GetDataActivity extends Activity implements OnClickListener{
 		setContentView(R.layout.getdatalayout);
 		
 		Button getData = (Button) findViewById(R.id.btGetData);
-		Button uploadData = (Button) findViewById(R.id.btUploadData);
 		datePicker = (DatePicker) findViewById(R.id.datePicker);
 		txtNetResult = (TextView) findViewById(R.id.txtNetResult);
 		
 		getData.setOnClickListener(this);
-		uploadData.setOnClickListener(this);
 
 		jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
 
@@ -104,9 +102,6 @@ public class GetDataActivity extends Activity implements OnClickListener{
 			*/
 			
 			//Toast.makeText(this, "Date to retrieve is " + datepicked, Toast.LENGTH_SHORT).show();
-			break;
-		case R.id.btUploadData:
-			Toast.makeText(this, "Date to send is " + datepicked, Toast.LENGTH_SHORT).show();
 			break;
 		default:
 			break;

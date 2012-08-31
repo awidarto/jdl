@@ -55,6 +55,5 @@ public class PassKeyDialog extends Dialog implements android.view.View.OnClickLi
 		void finish(String result);
 	}
 
-
 	
 }

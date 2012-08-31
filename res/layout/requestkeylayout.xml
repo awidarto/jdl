@@ -8,7 +8,8 @@
         android:id="@+id/edReqIdentifier"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Device Identifier" >
+		android:textAppearance="?android:attr/textAppearanceSmall"
+        android:hint="@string/devidentifier" >
 
         <requestFocus />
     </EditText>
@@ -16,21 +17,25 @@
         android:id="@+id/edAdminUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Admin Username" />
+		android:textAppearance="?android:attr/textAppearanceSmall"
+        android:hint="@string/adminname" />
     <EditText
         android:id="@+id/edAdminPasskey"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Admin Passkey"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+        android:hint="@string/adminpass"
         android:inputType="textPassword" />
 	    <Button
 	        android:id="@+id/btRequestKey"
 	        android:layout_width="fill_parent"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:layout_height="wrap_content"
-	        android:text="Request Key" />
+	        android:text="@string/reqdevkey" />
 	    <TextView
 	        android:id="@+id/txtReqResult"
 	        android:layout_width="fill_parent"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:layout_height="wrap_content"
 	        android:text="" />
 </LinearLayout>

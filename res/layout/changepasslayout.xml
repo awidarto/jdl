@@ -7,17 +7,20 @@
     <EditText
         android:id="@+id/edOldPass"
         android:layout_width="match_parent"
+		android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_height="wrap_content"
         android:hint="Old Passkey" >
     </EditText>
     <EditText
         android:id="@+id/edNewPass"
         android:layout_width="match_parent"
+		android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_height="wrap_content"
         android:hint="New Passkey" />
 	    <Button
 	        android:id="@+id/btChangeKey"
 	        android:layout_width="fill_parent"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:layout_height="wrap_content"
 	        android:text="Change Passkey" />
 </LinearLayout>

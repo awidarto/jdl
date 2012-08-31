@@ -14,41 +14,49 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:padding="2dp"
-	        android:text="Device Info :" />
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/deviceinfo" />
 	    <Button
 	        android:id="@+id/btCrDispatch"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:text="Courier Dispatch" />
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/departed" />
 	    <Button
 	        android:id="@+id/btCrReturn"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:text="Courier Return" />
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/returned" />
 	    <Button
 	        android:id="@+id/btSync"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:text="Synchronize" />
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/syncin" />
 	    <Button
+	        android:id="@+id/btSyncOut"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/syncout" />
+		<Button
 	        android:id="@+id/btUpdateKey"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:text="Request Device Key" />
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/reqdevkey" />
 	    <Button
 	        android:id="@+id/btChangePassKey"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:text="Change Passkey" />
-	    <Button
-	        android:id="@+id/btLockAdmin"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:text="Lock Option" />
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/changepass" />
 	    <TextView
 	        android:id="@+id/txtSendResult"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:padding="2dp"
 	        android:text="" />
 	    	</LinearLayout>
