@@ -49,7 +49,11 @@
     <string name="usegps">Use GPS</string>
     <string name="notnow">Not Now</string>
     <string name="deviceinfo">Device Info</string>
-    
+    <string name="dirtitle">Direction</string>
+    <string name="autosetting">Auto Report Setting</string>
+    <string name="autocancel">Cancel on Exit</string>
+    <string name="autointerval">Interval in Second</string>
+    <string name="savesetting">Save Setting</string>
     <string name="departed">Courier Dispatch</string>
     <string name="returned">Courier Return</string>
     <string name="syncin">Download Order</string>
@@ -58,9 +62,9 @@
     <string name="reqdevkey">Request Device Key</string>
     <string name="changepass">Change Passkey</string>
     <string name="lockopt">Lock Option</string>
-    
     <string name="adminname">Administrator Username</string>
     <string name="adminpass">Administrator Password</string>
     <string name="devidentifier">Device Identifier</string>
+    <string name="title_activity_auto_setting">Auto Report Setting</string>
 
 </resources>

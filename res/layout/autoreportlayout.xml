@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:padding="5dp" >
+		<TextView
+			android:id="@+id/autolabel"
+			android:text="@string/autointerval"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+		 />
+	    <EditText
+	        android:id="@+id/edInterval"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:ems="10"
+	        android:hint="@string/autointerval"
+	        android:inputType="number" >
+	        <requestFocus />
+	    </EditText>
+    
+	    <CheckBox
+	        android:id="@+id/chkAutoCancel"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/autocancel" />
+	
+
+	    <Button
+	        android:id="@+id/btSaveSetting"
+	        android:layout_width="fill_parent"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:layout_height="wrap_content"
+	        android:text="@string/savesetting" />    
+
+</LinearLayout>

@@ -52,6 +52,12 @@
 	        android:layout_height="wrap_content"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 	        android:text="@string/changepass" />
+	    <Button
+	        android:id="@+id/btAutoSetting"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/autosetting" />
 	    <TextView
 	        android:id="@+id/txtSendResult"
 	        android:layout_width="fill_parent"

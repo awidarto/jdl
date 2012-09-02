@@ -33,9 +33,10 @@ public class JayonMobileActivity extends TabActivity implements OnTabChangeListe
     private AlarmManager alarmManager;
 	private Intent alarmintent;
 	private PendingIntent pendingIntent;
-    private Integer repeated = 60 * 10;
+    private Long repeated;
     private String passkey;
 	private int currentTab = 0;
+	private Boolean cancelOnExit;
 
 	protected PassKeyDialog passdialog;
 	private Boolean login = false;
@@ -49,6 +50,9 @@ public class JayonMobileActivity extends TabActivity implements OnTabChangeListe
         setContentView(R.layout.main);
         
         jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
+        
+        cancelOnExit = jexPrefs.getBoolean("cancelonexit", true);
+        repeated = jexPrefs.getLong("autoreportinterval", 600);
         
         tabHost = getTabHost();
         
@@ -91,17 +95,18 @@ public class JayonMobileActivity extends TabActivity implements OnTabChangeListe
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
     	alarmintent = new Intent(this,GeoReporter.class);    	
-    	pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 234324243, alarmintent, 0);
+    	pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 20061972, alarmintent, 0);
 
-    	long alarminterval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-    	long firsttrigger = System.currentTimeMillis() + (alarminterval / 15 );
+    	//long alarminterval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+    	long alarminterval = repeated * 1000;
+    	long firsttrigger = System.currentTimeMillis() + alarminterval;
     	
     	alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,firsttrigger, alarminterval, pendingIntent);			
     	//alarmManager.set
 		IntentFilter connfilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
 		registerReceiver(networkStateReceiver, connfilter);
 		
-		Toast.makeText(this, "Alarm set in " + repeated + " seconds", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "Auto report set in " + repeated + " seconds interval", Toast.LENGTH_LONG).show();
 		
         passdialog = new PassKeyDialog(JayonMobileActivity.this,"passkeydialog");
     	passdialog.setDialogResult(new OnPassKeyResult() {						
@@ -130,9 +135,15 @@ public class JayonMobileActivity extends TabActivity implements OnTabChangeListe
     
     @Override
     protected void onDestroy() {
-    	alarmManager.cancel(pendingIntent);
-    	this.unregisterReceiver(georeporter);
-    	this.unregisterReceiver(networkStateReceiver);
+    	cancelOnExit = jexPrefs.getBoolean("cancelonexit", true);
+    	if(cancelOnExit == true){
+        	alarmManager.cancel(pendingIntent);
+        	this.unregisterReceiver(georeporter);
+        	this.unregisterReceiver(networkStateReceiver); 		
+    		Toast.makeText(getApplicationContext(), "Auto Report cancelled", Toast.LENGTH_SHORT).show();
+    	}else{
+    		Toast.makeText(getApplicationContext(), "Keep running Auto Report", Toast.LENGTH_SHORT).show();
+    	}
     	
         File source =  new File("data/data/com.kickstartlab.jm/databases/" + DATABASE_NAME);
         File dest =  new File(Environment.getExternalStorageDirectory() + "/" + DATABASE_NAME);
@@ -160,6 +171,8 @@ public class JayonMobileActivity extends TabActivity implements OnTabChangeListe
     	editor.putString("devkey", getResources().getString(R.string.api_key).toString());
     	editor.putString("devidentifier", getResources().getString(R.string.dev_identifier).toString());
     	editor.putInt("syncsession", 1);
+    	editor.putBoolean("cancelonexit", true);
+    	editor.putLong("autoreportinterval", 600);
     	editor.commit();
     }
     

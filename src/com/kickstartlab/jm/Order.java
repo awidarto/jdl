@@ -2,7 +2,7 @@ package com.kickstartlab.jm;
 
 public class Order {
 	private long id;
-	private String delivery_id,mc_name,mc_trans_id,ship_addr,by_name,by_phone,rec_name,cod_cost,cod_curr,dl_status;
+	private String delivery_id,mc_name,mc_trans_id,ship_addr,ship_dir,by_name,by_phone,rec_name,cod_cost,cod_curr,dl_status;
 		
 	public long getId() {
 		return id;
@@ -83,6 +83,14 @@ public class Order {
 		this.dl_status = dl_status;
 	}
 
+	public String getDirection() {
+		return ship_dir;
+	}
+	
+	public void setDirection(String ship_dir) {
+		this.ship_dir = ship_dir;
+	}
+	
 	@Override
 	public String toString(){
 		return delivery_id;

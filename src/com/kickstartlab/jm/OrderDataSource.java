@@ -27,7 +27,8 @@ public class OrderDataSource {
 			JayonDbHelper.COLUMN_COD_CURR,
 			JayonDbHelper.COLUMN_ASSIGNED_DATE,
 			JayonDbHelper.COLUMN_ASSIGNED_TIMESLOT,
-			JayonDbHelper.COLUMN_DELIVERY_STATUS
+			JayonDbHelper.COLUMN_DELIVERY_STATUS,
+			JayonDbHelper.COLUMN_SHIP_DIR
 		};
 	
 	public OrderDataSource(Context context) {
@@ -122,6 +123,7 @@ public class OrderDataSource {
 		        order.setCODCost(cursor.getString(8));
 		        order.setCODCurr(cursor.getString(9));
 		        order.setStatus(cursor.getString(10));
+		        order.setDirection(cursor.getString(13));
 		        cursor.close();
 		        return order;
 			}else{

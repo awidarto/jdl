@@ -69,6 +69,7 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
         Button courierDispatch = (Button) findViewById(R.id.btCrDispatch);
         Button courierReturn = (Button) findViewById(R.id.btCrReturn);
         Button syncLog = (Button) findViewById(R.id.btSyncOut);
+        Button autoSetting = (Button) findViewById(R.id.btAutoSetting);
         deviceinfo = (TextView) findViewById(R.id.txtDevInfo);
         txtSendResult = (TextView)findViewById(R.id.txtSendResult);
         
@@ -78,6 +79,7 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
         courierDispatch.setOnClickListener(this);
         courierReturn.setOnClickListener(this);
         syncLog.setOnClickListener(this);
+        autoSetting.setOnClickListener(this);
         
         jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
 
@@ -127,6 +129,10 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
 				break;
 			case R.id.btChangePassKey:
 				intent = new Intent(v.getContext(),ChangePassActivity.class);
+				startActivity(intent);
+				break;
+			case R.id.btAutoSetting:
+				intent = new Intent(v.getContext(),AutoSettingActivity.class);
 				startActivity(intent);
 				break;
 			case R.id.btCrDispatch:

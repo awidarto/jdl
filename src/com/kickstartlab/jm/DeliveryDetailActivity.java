@@ -76,8 +76,9 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 	LogDataSource logdatasource = new LogDataSource(this);
 	LogData lastlog = new LogData();
 	String last;
+	private static final int DIRECTION_DIALOG_ID = 1;
 	private static final int UPLOAD_DIALOG_ID = 2;
-	String imagefile;
+	String imagefile,direction;
 	Button btUploadPic;
 	
     public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +121,10 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		}finally{
 			logdatasource.close();
 		}
-		        
+
+        direction = order.getDirection();
+		Log.i("DIR",direction);
+		
         StringBuilder order_info = new StringBuilder()
         	.append(getResources().getText(R.string.delivery_id) + " :\n")
 	        .append(delivery_id).append("\n")
@@ -133,7 +137,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 	        .append(getResources().getText(R.string.shipping) + " :\n")
 	        .append(order.getRecipient()).append("\n")
 	        .append(order.getShipAddr()).append("\n")
-	        .append("Billing : ").append(order.getCODCurr()).append(" ").append(order.getCODCost());
+	        .append("Billing : ").append(order.getCODCurr()).append(" ").append(order.getCODCost());        
         
         txtDeliveryId.setText(order_info);
         
@@ -227,6 +231,9 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			case R.id.btDeliRevoked:
 				sendstatus.execute(new String[]{delivery_id, "revoked"});
 				break;
+			case R.id.btDirection:
+				showDialog(DIRECTION_DIALOG_ID);
+				break;
 			case R.id.btUpdateLoc:
 				/*
 				if(locman.isProviderEnabled(LocationManager.GPS_PROVIDER)){
@@ -286,25 +293,49 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		// TODO Auto-generated method stub
 		//return super.onCreateDialog(id);
 		Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.uploadtitle);
-        builder.setMessage(R.string.uploadconfirm);
-        
-        builder.setPositiveButton(android.R.string.ok, 
-        		new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						uploadPhoto(imagefile);
-						//Toast.makeText(getApplicationContext(), "Ok !", Toast.LENGTH_SHORT).show();
-					}
-				});
+		
+		if(id == DIRECTION_DIALOG_ID){
+	        builder.setTitle(R.string.dirtitle);
+	        builder.setMessage(direction);
+	        
+	        builder.setPositiveButton(android.R.string.ok, 
+	        		new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							//Toast.makeText(getApplicationContext(), "Ok !", Toast.LENGTH_SHORT).show();
+						}
+					});
 
-        builder.setNegativeButton(R.string.notnow, 
-        		new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Toast.makeText(getApplicationContext(), "Picture will be uploaded later, you may use Upload button under the picture.", Toast.LENGTH_SHORT).show();
-					}
-				});
+	        builder.setNegativeButton(android.R.string.no, 
+	        		new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							//
+						}
+					});
+			
+		}else if(id == UPLOAD_DIALOG_ID){
+	        builder.setTitle(R.string.uploadtitle);
+	        builder.setMessage(R.string.uploadconfirm);
+	        
+	        builder.setPositiveButton(android.R.string.ok, 
+	        		new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							uploadPhoto(imagefile);
+							//Toast.makeText(getApplicationContext(), "Ok !", Toast.LENGTH_SHORT).show();
+						}
+					});
+
+	        builder.setNegativeButton(R.string.notnow, 
+	        		new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Toast.makeText(getApplicationContext(), "Picture will be uploaded later, you may use Upload button under the picture.", Toast.LENGTH_SHORT).show();
+						}
+					});
+
+		}
         
         return builder.create();				
 	}
