@@ -1,6 +1,8 @@
 package com.kickstartlab.jm;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,6 +14,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -26,11 +31,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -57,7 +68,8 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
 	protected LocationManager locman;
 	protected Location loc;
 	
-	LogDataSource logdatasource = new LogDataSource(this);	
+	LogDataSource logdatasource = new LogDataSource(this);
+	OrderDataSource ordersource = new OrderDataSource(this);
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,11 +81,13 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
         Button courierDispatch = (Button) findViewById(R.id.btCrDispatch);
         Button courierReturn = (Button) findViewById(R.id.btCrReturn);
         Button syncLog = (Button) findViewById(R.id.btSyncOut);
+        Button syncPic = (Button) findViewById(R.id.btSyncPic);
         Button autoSetting = (Button) findViewById(R.id.btAutoSetting);
         deviceinfo = (TextView) findViewById(R.id.txtDevInfo);
         txtSendResult = (TextView)findViewById(R.id.txtSendResult);
         
         syncData.setOnClickListener(this);
+        syncPic.setOnClickListener(this);
         updateKey.setOnClickListener(this);
         changePassKey.setOnClickListener(this);
         courierDispatch.setOnClickListener(this);
@@ -146,6 +160,10 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
 				latitude = Double.toString(loc.getLatitude());
 				longitude = Double.toString(loc.getLongitude());
 				sendstatus.execute(new String[]{"returned"});
+				break;
+			case R.id.btSyncPic:
+				UploadPicProcess uploadpic = new UploadPicProcess();
+				uploadpic.execute(new String[]{"nodata"});				
 				break;
 			default:
 				Toast.makeText(this, "None to Do", Toast.LENGTH_SHORT).show();
@@ -249,6 +267,23 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
 		
 	}
 
+	private int checkConnection(){
+		ConnectivityManager connect =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+		Integer result = 1;
+		
+		if ( connect.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED ||
+			connect.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTING ||
+			connect.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING ||
+			connect.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ) {
+			result = 1;
+			
+		} else if ( connect.getNetworkInfo(0).getState() == NetworkInfo.State.DISCONNECTED ||
+			connect.getNetworkInfo(1).getState() == NetworkInfo.State.DISCONNECTED  ) {
+			result = 0;
+		}
+
+		return result;
+	}	
 	
 	protected String sendStatus(String status) throws JSONException{
 		String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
@@ -317,7 +352,6 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
 		
 		return txtResult;
 	}
-
 	
 	private class UploadLogProcess extends AsyncTask<String, Void, String>{
 
@@ -421,6 +455,131 @@ public class AdminOptionActivity extends Activity implements OnClickListener{
 		
 	}
 
+	private class UploadPicProcess extends AsyncTask<String, String, String>{
+
+		@Override
+		protected String doInBackground(String... params) {
+
+			String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
+			String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_upload_pic).toString() + key;
+			String txtResult = "";
+			
+			try{
+				ordersource.open();
+				Cursor piccursor = ordersource.getAllOrders();
+				int piccount = 0;
+				int picof = 0;
+				
+				if(piccursor.getCount() > 0){
+						piccount = piccursor.getCount();
+					  	piccursor.moveToFirst();
+				        while (piccursor.isAfterLast() == false) {
+				        	//uploading start
+							String delivery_id = piccursor.getString(1);
+
+				        	String imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
+							
+							File cfile = new File(imagefile);		
+				        	
+							if(checkConnection() == 1 && cfile.exists()){
+								
+								picof++;
+								publishProgress("Uploading photo " + picof +" of "+ piccount);
+								
+								HttpClient httpclient = new DefaultHttpClient();
+								HttpPost httppost = new HttpPost(url);
+								
+								try{
+									//compress image first
+									Bitmap bm = BitmapFactory.decodeFile(imagefile);				
+									ByteArrayOutputStream bos = new ByteArrayOutputStream();
+						            bm.compress(CompressFormat.JPEG, 25, bos);
+						            byte[] bdata = bos.toByteArray();
+						            ByteArrayBody bbody = new ByteArrayBody(bdata, delivery_id +".jpg");
+									
+									MultipartEntity entity = new MultipartEntity();
+									entity.addPart("delivery_id", new StringBody(delivery_id));
+									entity.addPart("receiverpic", bbody);
+									httppost.setEntity(entity);									
+									HttpResponse response = httpclient.execute(httppost);
+
+									// for JSON:
+									if(response != null)
+									{
+										InputStream is = response.getEntity().getContent();
+
+										BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+										StringBuilder sb = new StringBuilder();
+
+										String line = null;
+										try {
+											while ((line = reader.readLine()) != null) {
+												sb.append(line + "\n");
+											}
+										} catch (IOException e) {
+											e.printStackTrace();
+										} finally {
+											try {
+												is.close();
+											} catch (IOException e) {
+												e.printStackTrace();
+											}
+										}
+																				
+										txtResult = sb.toString();
+									}				
+								}catch(Exception e){
+									e.printStackTrace();
+								}
+								
+							}else if(cfile.exists() == false){
+								publishProgress("Missing " + picof +" of "+ piccount);
+								txtResult = "Connection Lost";
+							}
+				        	//uploading end
+					        piccursor.moveToNext();
+				        }					
+				}
+				
+				piccursor.close();
+				ordersource.close();
+
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			// TODO Auto-generated method stub
+			return txtResult;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			Log.i("JSONResult",result);
+			if(result.indexOf("OK:") > 0){					
+				Toast.makeText(AdminOptionActivity.this,"Photos uploaded", Toast.LENGTH_LONG).show();
+			}
+			
+			dialog.dismiss();
+			
+		}
+		
+		
+
+		/* (non-Javadoc)
+		 * @see android.os.AsyncTask#onProgressUpdate(Progress[])
+		 */
+		@Override
+		protected void onProgressUpdate(String... val) {
+			//super.onProgressUpdate(val);
+			dialog.setMessage(val[0]);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			dialog.setMessage("Uploading Photos");
+			dialog.show();
+		}
+		
+	}
 
 
 }
