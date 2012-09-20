@@ -53,17 +53,29 @@
 	    	    
 	    <EditText
 	        android:id="@+id/editNote"
-	        android:layout_width="match_parent"
+	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
+	        android:layout_alignRight="@+id/btEnroute"
 	        android:layout_below="@+id/btUploadPic"
 	        android:layout_marginTop="10dp"
 	        android:gravity="top"
 	        android:hint="@string/noteField"
 	        android:inputType="textLongMessage|textMultiLine"
 	        android:minLines="2" >
+
 	    </EditText>
-	
+	    <Button
+	        android:id="@+id/btUploadNote"
+	        android:layout_width="50dp"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_alignTop="@+id/editNote"
+	        android:layout_toRightOf="@+id/editNote"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+	        android:text="@string/syncnote" >
+	    </Button>
+	    	
 	    <Button
 	        android:id="@+id/btPickedUp"
 	        android:layout_width="110dp"

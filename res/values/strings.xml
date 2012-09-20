@@ -59,6 +59,7 @@
     <string name="syncin">Download Order</string>
     <string name="syncout">Upload Report</string>
     <string name="syncpic">Upload Photos</string>
+    <string name="syncnote">Upload Note</string>
     <string name="reqdevkey">Request Device Key</string>
     <string name="changepass">Change Passkey</string>
     <string name="lockopt">Lock Option</string>

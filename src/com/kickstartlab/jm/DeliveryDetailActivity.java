@@ -107,6 +107,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         Button btDirection = (Button) findViewById(R.id.btDirection);
         Button btPosition = (Button)findViewById(R.id.btUpdateLoc);
         Button btTakePic = (Button) findViewById(R.id.btTakePic);
+        Button btUploadNote = (Button) findViewById(R.id.btUploadNote);
         btUploadPic = (Button) findViewById(R.id.btUploadPic);
         
         Order order = ordersource.getOrder(delivery_id);
@@ -164,6 +165,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         btDirection.setOnClickListener(this);
         btPosition.setOnClickListener(this);
         btTakePic.setOnClickListener(this);
+        btUploadNote.setOnClickListener(this);
         btUploadPic.setOnClickListener(this);
         
         //btTakePic.setEnabled(false);
@@ -233,6 +235,9 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 				break;
 			case R.id.btDirection:
 				showDialog(DIRECTION_DIALOG_ID);
+				break;
+			case R.id.btUploadNote:
+				sendstatus.execute(new String[]{delivery_id, "syncnote"});
 				break;
 			case R.id.btUpdateLoc:
 				/*
