@@ -57,25 +57,26 @@ public class JayonMobileActivity extends TabActivity implements OnTabChangeListe
         tabHost = getTabHost();
         
         TabSpec spec1 = tabHost.newTabSpec("deliveries");        
-        spec1.setIndicator("Orders");
+        spec1.setIndicator("Order");
         Intent intent1 = new Intent(this, DeliveryListActivity.class);
         spec1.setContent(intent1);
         tabHost.addTab(spec1);
 
+
+        TabSpec spec3 = tabHost.newTabSpec("route");
+        spec3.setIndicator("Rute");
+        Intent intent3 = new Intent(this, RouteListActivity.class );
+        spec3.setContent(intent3);
+        tabHost.addTab(spec3);
+
         TabSpec spec2 = tabHost.newTabSpec("location");
-        spec2.setIndicator("Location");
+        spec2.setIndicator("Peta");
         Intent intent2 = new Intent(this, LocationActivity.class );
         spec2.setContent(intent2);
         tabHost.addTab(spec2);
-        /*
-        TabSpec spec3 = tabHost.newTabSpec("scan");
-        spec3.setIndicator("Scan");
-        Intent intent3 = new Intent(this, ScanActivity.class );
-        spec3.setContent(intent3);
-        tabHost.addTab(spec3);
-		*/
+        
         TabSpec spec4 = tabHost.newTabSpec("options");
-        spec4.setIndicator("Options");
+        spec4.setIndicator("Opsi");
         Intent intent4 = new Intent(this, AdminOptionActivity.class );
         spec4.setContent(intent4);
         tabHost.addTab(spec4);

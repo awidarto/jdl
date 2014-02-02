@@ -9,9 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,6 +39,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.location.Criteria;
@@ -96,15 +100,17 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         
         txtDeliveryPos = (TextView) findViewById(R.id.txtDetailPos);
         TextView txtDeliveryId = (TextView) findViewById(R.id.txtDetail);
+        TextView txtDeliveryType = (TextView) findViewById(R.id.txtDeliveryType);
+
         editNote = (EditText) findViewById(R.id.editNote);
         imagecam = (ImageView) findViewById(R.id.imageCam);
         Button btDelivered = (Button) findViewById(R.id.btDelivered);
-        Button btPickedUp = (Button) findViewById(R.id.btPickedUp);
+        //Button btPickedUp = (Button) findViewById(R.id.btPickedUp);
         Button btRescheduled = (Button) findViewById(R.id.btRescheduled);
         Button btRevoked = (Button) findViewById(R.id.btDeliRevoked);
-        Button btEnroute = (Button) findViewById(R.id.btEnroute);
+        //Button btEnroute = (Button) findViewById(R.id.btEnroute);
         Button btNoShow = (Button) findViewById(R.id.btNoShow);    
-        Button btDirection = (Button) findViewById(R.id.btDirection);
+        //Button btDirection = (Button) findViewById(R.id.btDirection);
         Button btPosition = (Button)findViewById(R.id.btUpdateLoc);
         Button btTakePic = (Button) findViewById(R.id.btTakePic);
         Button btUploadNote = (Button) findViewById(R.id.btUploadNote);
@@ -125,22 +131,39 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 
         direction = order.getDirection();
 		Log.i("DIR",direction);
+				
+		Locale locale  = new Locale("id", "ID");
+		String pattern = "###,###,###.##";
+
+		DecimalFormat formatter = (DecimalFormat) NumberFormat.getNumberInstance(locale);
+		formatter.applyPattern(pattern);		
 		
-        StringBuilder order_info = new StringBuilder()
-        	.append(getResources().getText(R.string.delivery_id) + " :\n")
-	        .append(delivery_id).append("\n")
-	        .append(getResources().getText(R.string.transaction_id).toString() + " :\n")
-	        .append(order.getMcTransId()).append("\n")
-	        .append(getResources().getText(R.string.merchant) + " : ")
-	        .append(order.getMcName()).append("\n")
-	        .append(getResources().getText(R.string.delivery_status) + " : ")
-	        .append(last).append("\n")
-	        .append(getResources().getText(R.string.shipping) + " :\n")
+        StringBuilder recipient = new StringBuilder()
 	        .append(order.getRecipient()).append("\n")
 	        .append(order.getShipAddr()).append("\n")
-	        .append("Billing : ").append(order.getCODCurr()).append(" ").append(order.getCODCost());        
+	        .append(order.getBy_zone()).append("\n")
+	        .append(order.getBy_city());        
+
+        TextView txtBuyer = (TextView) findViewById(R.id.txtBuyer);
+        TextView txtRecipient = (TextView) findViewById(R.id.txtRecipient);
+        TextView txtPhone = (TextView) findViewById(R.id.txtPhone);
+        TextView txtTotalValue = (TextView) findViewById(R.id.txtTotalValue);
+        TextView txtDeliveryCost = (TextView) findViewById(R.id.txtDeliveryCost);
+        TextView txtCODSurcharge = (TextView) findViewById(R.id.txtCODSurcharge);
+
+        txtBuyer.setText(order.getByName());
+        txtRecipient.setText(recipient.toString());
+        txtPhone.setText("+" + order.getByPhone());
+        txtTotalValue.setText(formatter.format( Double.parseDouble(order.getTot_price()) ));
+        txtDeliveryCost.setText(formatter.format( Double.parseDouble(order.getDelivery_cost()) ));
+        txtCODSurcharge.setText(formatter.format( Double.parseDouble(order.getCODCost()) ));
         
-        txtDeliveryId.setText(order_info);
+        txtDeliveryType.setText(order.getDl_type());
+        if("COD".equalsIgnoreCase(order.getDl_type()) || "CCOD".equalsIgnoreCase(order.getDl_type()) ){
+            txtDeliveryType.setBackgroundColor(Color.RED);
+        }else{
+            txtDeliveryType.setBackgroundColor(Color.LTGRAY);
+        }
         
         Log.i("Delivery_id",delivery_id);
         
@@ -157,12 +180,12 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		}
 		
         btDelivered.setOnClickListener(this);
-        btEnroute.setOnClickListener(this);
+        //btEnroute.setOnClickListener(this);
         btNoShow.setOnClickListener(this);
-        btPickedUp.setOnClickListener(this);
+        //btPickedUp.setOnClickListener(this);
         btRescheduled.setOnClickListener(this);
         btRevoked.setOnClickListener(this);
-        btDirection.setOnClickListener(this);
+        //btDirection.setOnClickListener(this);
         btPosition.setOnClickListener(this);
         btTakePic.setOnClickListener(this);
         btUploadNote.setOnClickListener(this);
@@ -171,9 +194,9 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         //btTakePic.setEnabled(false);
 
         btDelivered.setEnabled(disableByStatus(last,"delivered"));
-        btEnroute.setEnabled(disableByStatus(last,"enroute"));
+        //btEnroute.setEnabled(disableByStatus(last,"enroute"));
         btNoShow.setEnabled(disableByStatus(last,"noshow"));
-        btPickedUp.setEnabled(disableByStatus(last,"pickedup"));
+        //btPickedUp.setEnabled(disableByStatus(last,"pickedup"));
         btRescheduled.setEnabled(disableByStatus(last,"rescheduled"));
         btRevoked.setEnabled(disableByStatus(last,"revoked"));
         
@@ -218,24 +241,30 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			case R.id.btDelivered:
 				sendstatus.execute(new String[]{delivery_id, "delivered"});
 				break;
+			/*
 			case R.id.btEnroute:
 				sendstatus.execute(new String[]{delivery_id, "enroute"});
 				break;
+			*/
 			case R.id.btNoShow:
 				sendstatus.execute(new String[]{delivery_id, "noshow"});
 				break;
+			/*
 			case R.id.btPickedUp:
 				sendstatus.execute(new String[]{delivery_id, "pickedup"});
 				break;
+			*/
 			case R.id.btRescheduled:
 				sendstatus.execute(new String[]{delivery_id, "rescheduled"});
 				break;
 			case R.id.btDeliRevoked:
 				sendstatus.execute(new String[]{delivery_id, "revoked"});
 				break;
+			/*
 			case R.id.btDirection:
 				showDialog(DIRECTION_DIALOG_ID);
 				break;
+			*/
 			case R.id.btUploadNote:
 				sendstatus.execute(new String[]{delivery_id, "syncnote"});
 				break;

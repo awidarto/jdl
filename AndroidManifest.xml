@@ -15,13 +15,13 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name=".JayonApp"
+        android:name="com.kickstartlab.jm.JayonApp"
         android:icon="@drawable/jicon"
         android:label="@string/app_name" >
         <uses-library android:name="com.google.android.maps" />
 
         <activity
-            android:name=".JayonMobileActivity"
+            android:name="com.kickstartlab.jm.JayonMobileActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" >
@@ -31,25 +31,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="DeliveryListActivity" >
+        <activity android:name="com.kickstartlab.jm.DeliveryListActivity" >
         </activity>
-        <activity android:name="AdminOptionActivity" >
+        <activity android:name="com.kickstartlab.jm.AdminOptionActivity" >
         </activity>
         <activity
-            android:name="DeliveryDetailActivity"
+            android:name="com.kickstartlab.jm.DeliveryDetailActivity"
             android:windowSoftInputMode="stateHidden" >
         </activity>
-        <activity android:name="LocationActivity" >
+        <activity android:name="com.kickstartlab.jm.LocationActivity" >
         </activity>
-        <activity android:name="GetDataActivity" >
+        <activity android:name="com.kickstartlab.jm.GetDataActivity" >
         </activity>
-        <activity android:name="RequestKeyActivity" >
+        <activity android:name="com.kickstartlab.jm.RequestKeyActivity" >
         </activity>
-        <activity android:name="ChangePassActivity" >
+        <activity android:name="com.kickstartlab.jm.ChangePassActivity" >
         </activity>
-        <activity android:name="AutoSettingActivity" >
+        <activity android:name="com.kickstartlab.jm.AutoSettingActivity" >
         </activity>
-        <activity android:name="ScanActivity" >
+        <activity android:name="com.kickstartlab.jm.ScanActivity" >
         </activity>
         <activity
             android:name="com.google.zxing.client.android.CaptureActivity"
@@ -69,17 +69,21 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".GeoReportService" >
+        <service android:name="com.kickstartlab.jm.GeoReportService" >
         </service>
 
-        <receiver android:name=".GeoReporter" >
+        <receiver android:name="com.kickstartlab.jm.GeoReporter" >
         </receiver>
-        <receiver android:name=".ConnMon" >
+        <receiver android:name="com.kickstartlab.jm.ConnMon" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name="com.kickstartlab.jm.RouteListActivity"
+            android:label="@string/title_activity_route_list" >
+        </activity>
     </application>
 
 </manifest>

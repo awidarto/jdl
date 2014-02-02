@@ -19,9 +19,14 @@
     <string name="delivery_id">Delivery ID</string>
     <string name="transaction_id">Transaction ID</string>
     <string name="merchant">Merchant</string>
-    <string name="recipient">Recipient</string>
-    <string name="shipping">Deliver To</string>
+    <string name="buyer">Pembeli</string>
+    <string name="recipient">Penerima</string>
+    <string name="shipping">Kirim Ke</string>
+    <string name="phone">Telepon</string>
     <string name="cost">Cost</string>
+    <string name="cod_cost">COD Surcharge</string>
+    <string name="delivery_cost">Ongkos Kirim</string>
+    <string name="total_value">Nilai Paket</string>
     <string name="delivery_status">Status</string>
     <string name="delivered">Delivered</string>
     <string name="pickedup">Picked Up</string>
@@ -67,5 +72,7 @@
     <string name="adminpass">Administrator Password</string>
     <string name="devidentifier">Device Identifier</string>
     <string name="title_activity_auto_setting">Auto Report Setting</string>
+    <string name="title_activity_route_list">Route</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

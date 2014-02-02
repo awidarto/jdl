@@ -19,6 +19,7 @@ public class OrderDataSource {
 			JayonDbHelper.COLUMN_ORDER_ID,
 			JayonDbHelper.COLUMN_TRANS_ID,
 			JayonDbHelper.COLUMN_MERCHANT_NAME,
+			JayonDbHelper.COLUMN_SHIP_SEQ,
 			JayonDbHelper.COLUMN_SHIP_ADDR,
 			JayonDbHelper.COLUMN_BUYER_NAME,
 			JayonDbHelper.COLUMN_BUYER_PHONE,
@@ -28,7 +29,13 @@ public class OrderDataSource {
 			JayonDbHelper.COLUMN_ASSIGNED_DATE,
 			JayonDbHelper.COLUMN_ASSIGNED_TIMESLOT,
 			JayonDbHelper.COLUMN_DELIVERY_STATUS,
-			JayonDbHelper.COLUMN_SHIP_DIR
+			JayonDbHelper.COLUMN_SHIP_DIR,
+			JayonDbHelper.COLUMN_DELIVERY_COST,
+			JayonDbHelper.COLUMN_DELIVERY_TYPE,
+			JayonDbHelper.COLUMN_TOTAL_VALUE,
+			JayonDbHelper.COLUMN_BUYER_ZONE,
+			JayonDbHelper.COLUMN_BUYER_CITY
+			
 		};
 	
 	public OrderDataSource(Context context) {
@@ -57,6 +64,8 @@ public class OrderDataSource {
 	public void saveOrderJSON(JSONObject jsonObj){
 		try{
 			ContentValues val = new ContentValues();
+			
+			//long id, long merchant_id,String merchantname, String buyername, String address, String phones
 
 			val.put(JayonDbHelper.COLUMN_ORDER_ID, jsonObj.getString(JayonDbHelper.COLUMN_ORDER_ID));
 			val.put(JayonDbHelper.COLUMN_TRANS_ID, jsonObj.getString(JayonDbHelper.COLUMN_TRANS_ID));
@@ -67,6 +76,7 @@ public class OrderDataSource {
 			val.put(JayonDbHelper.COLUMN_MERCHANT_PROVINCE, jsonObj.getString(JayonDbHelper.COLUMN_MERCHANT_PROVINCE));
 			
 			
+			val.put(JayonDbHelper.COLUMN_SHIP_SEQ, jsonObj.getString(JayonDbHelper.COLUMN_SHIP_SEQ));
 			val.put(JayonDbHelper.COLUMN_SHIP_ADDR, jsonObj.getString(JayonDbHelper.COLUMN_SHIP_ADDR));
 			val.put(JayonDbHelper.COLUMN_SHIP_DIR, jsonObj.getString(JayonDbHelper.COLUMN_SHIP_DIR));
 			val.put(JayonDbHelper.COLUMN_SHIP_LAT, jsonObj.getString(JayonDbHelper.COLUMN_SHIP_LAT));
@@ -81,6 +91,9 @@ public class OrderDataSource {
 
 			
 			val.put(JayonDbHelper.COLUMN_RECIPIENT_NAME, jsonObj.getString(JayonDbHelper.COLUMN_RECIPIENT_NAME));
+			val.put(JayonDbHelper.COLUMN_TOTAL_VALUE, jsonObj.getString(JayonDbHelper.COLUMN_TOTAL_VALUE));
+			val.put(JayonDbHelper.COLUMN_DELIVERY_TYPE, jsonObj.getString(JayonDbHelper.COLUMN_DELIVERY_TYPE));
+			val.put(JayonDbHelper.COLUMN_DELIVERY_COST, jsonObj.getString(JayonDbHelper.COLUMN_DELIVERY_COST));
 			val.put(JayonDbHelper.COLUMN_COD_COST, jsonObj.getString(JayonDbHelper.COLUMN_COD_COST));
 			val.put(JayonDbHelper.COLUMN_COD_CURR, jsonObj.getString(JayonDbHelper.COLUMN_COD_CURR));
 			
@@ -116,14 +129,20 @@ public class OrderDataSource {
 		        order.setDeliveryId(cursor.getString(1));
 		        order.setMcTransId(cursor.getString(2));
 		        order.setMcName(cursor.getString(3));
-		        order.setShipAddr(cursor.getString(4));
-		        order.setByName(cursor.getString(5));
-		        order.setByPhone(cursor.getString(6));
-		        order.setRecipient(cursor.getString(7));
-		        order.setCODCost(cursor.getString(8));
-		        order.setCODCurr(cursor.getString(9));
-		        order.setStatus(cursor.getString(10));
-		        order.setDirection(cursor.getString(13));
+		        order.setSeq(cursor.getInt(4));
+		        order.setShipAddr(cursor.getString(5));
+		        order.setByName(cursor.getString(6));
+		        order.setByPhone(cursor.getString(7));
+		        order.setRecipient(cursor.getString(8));
+		        order.setCODCost(cursor.getString(9));
+		        order.setCODCurr(cursor.getString(10));
+		        order.setStatus(cursor.getString(11));
+		        order.setDirection(cursor.getString(12));
+		        order.setDelivery_cost(cursor.getString(15));
+		        order.setDl_type(cursor.getString(16));
+		        order.setTot_price(cursor.getString(17));
+		        order.setBy_zone(cursor.getString(18));
+		        order.setBy_city(cursor.getString(19));
 		        cursor.close();
 		        return order;
 			}else{
@@ -160,4 +179,32 @@ public class OrderDataSource {
 		}
 	}
 
+	public Cursor getAllOrdersSortMc(){
+		try{
+			Cursor cursor = database.query(
+					JayonDbHelper.TABLE_ORDERS,
+					allColumns,null,null,null,null,"mc_name ASC"
+				);
+			cursor.moveToFirst();
+			return cursor;			
+		}catch(SQLException e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Cursor getAllOrdersSortSeq(){
+		try{
+			Cursor cursor = database.query(
+					JayonDbHelper.TABLE_ORDERS, 
+					allColumns, null, null, null, null, "seq ASC");
+			
+			cursor.moveToFirst();
+			return cursor;			
+		}catch(SQLException e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 }

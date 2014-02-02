@@ -3,45 +3,28 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:padding="6dip" >
-
-    <TextView
-        android:id="@+id/delivery_id"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:gravity="center_vertical"
-        android:text="@+id/delivery_id"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/trans_id"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/delivery_id"
-        android:layout_below="@+id/delivery_id"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="@+id/trans_id" />
-
     <TextView
         android:id="@+id/delivery_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/trans_id"
-        android:layout_below="@+id/trans_id"
+        android:paddingLeft="3dp"
         android:text="2012-03-12"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
     <TextView
         android:id="@+id/merchant_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/delivery_date"
         android:paddingLeft="3dp"
-        android:layout_alignBaseline="@+id/delivery_date"
-        android:layout_alignBottom="@+id/delivery_date"
-        android:layout_toRightOf="@+id/delivery_date"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    <TextView
+        android:id="@+id/buyer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="3dp"
+        android:layout_below="@+id/merchant_name"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+    
 </RelativeLayout>

@@ -30,31 +30,27 @@ public class DeliveryListActivity extends Activity implements OnItemClickListene
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);        
         ordersource.open();
         
-        Cursor cursor = ordersource.getAllOrders();
+        Cursor cursor = ordersource.getAllOrdersSortMc();
         
         adapter = new SimpleCursorAdapter(
         		this, 
         		R.layout.listitemlayout, 
         		cursor,
         		new String[]{
-        			JayonDbHelper.COLUMN_ORDER_ID,
-        			JayonDbHelper.COLUMN_TRANS_ID,
+        			JayonDbHelper.COLUMN_MERCHANT_NAME,
+        			JayonDbHelper.COLUMN_BUYER_NAME,
         			JayonDbHelper.COLUMN_ASSIGNED_DATE,
-        			JayonDbHelper.COLUMN_MERCHANT_NAME
+        			JayonDbHelper.COLUMN_ORDER_ID
         		}
         		,new int[]{
-        			R.id.delivery_id,
-        			R.id.trans_id,
-        			R.id.delivery_date,
-        			R.id.merchant_name
+        			R.id.merchant_name,
+        			R.id.buyer_name,
+        			R.id.delivery_date
         		});
         
         list.setOnItemClickListener(this);
         btScanList.setOnClickListener(this);
         
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, vals);
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.listitemlayout,R.id.label,vals);
-        //setListAdapter(adapter);
         list.setAdapter(adapter);
         cursor.close();
         ordersource.close();
@@ -67,7 +63,7 @@ public class DeliveryListActivity extends Activity implements OnItemClickListene
 		// TODO Auto-generated method stub
 		super.onResume();
         ordersource.open();        
-        Cursor cursor = ordersource.getAllOrders();        
+        Cursor cursor = ordersource.getAllOrdersSortMc();        
         adapter.changeCursor(cursor);
         adapter.notifyDataSetChanged();
         ordersource.close();
@@ -81,6 +77,7 @@ public class DeliveryListActivity extends Activity implements OnItemClickListene
 		//Cursor cur = (Cursor) getListAdapter().getItem(pos);
 		Cursor cur = (Cursor) adapter.getItem(pos);
 		String item = cur.getString(cur.getColumnIndex(JayonDbHelper.COLUMN_ORDER_ID));
+		Log.i("delivery id", item);
 		Intent nextIntent = new Intent(v.getContext(),DeliveryDetailActivity.class);
 		nextIntent.putExtra("delivery_id", item);
 		startActivity(nextIntent);

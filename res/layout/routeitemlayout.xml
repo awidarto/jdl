@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dip" >
+
+    <TextView
+        android:id="@+id/sequence"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:text="1"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/delivery_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/sequence"
+        android:paddingLeft="3dp"
+        android:text="2012-03-12"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+    <TextView
+        android:id="@+id/merchant_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_below="@+id/delivery_date"
+        android:layout_toRightOf="@+id/sequence"
+        android:paddingLeft="3dp"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/buyer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/merchant_name"
+        android:layout_below="@+id/merchant_name"
+        android:paddingLeft="3dp"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/buyer_zone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/buyer_name"
+        android:layout_below="@+id/buyer_name"
+        android:gravity="center_vertical"
+        android:paddingLeft="3dp"
+        android:text="@+id/delivery_id"
+        android:textStyle="normal" />
+
+    <TextView
+        android:id="@+id/buyer_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/buyer_zone"
+        android:layout_alignBottom="@+id/buyer_zone"
+        android:layout_toRightOf="@+id/buyer_zone"
+        android:gravity="center_vertical"
+        android:paddingLeft="6dp"
+        android:text="@+id/delivery_id"
+        android:textStyle="normal" />
+    
+</RelativeLayout>
