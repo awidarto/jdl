@@ -46,6 +46,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -68,12 +69,13 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 	LocationManager locman;
 	String provider;
 	Uri imageUri;
-	ImageView imagecam;
+	ImageView imagecam,imagesign;
 	Bitmap bitmap,upimage;
-	String latitude,longitude,altitude;
+	String latitude,longitude,altitude,photolat, photolon;
     Criteria criteria = new Criteria();
     TextView txtDeliveryPos;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1337;
+    private static final int CAPTURE_SIGN_ACTIVITY_REQUEST_CODE = 8662;
     private SharedPreferences jexPrefs;
 	private ProgressDialog dialog;
 	Integer sync_id;
@@ -82,8 +84,10 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 	String last;
 	private static final int DIRECTION_DIALOG_ID = 1;
 	private static final int UPLOAD_DIALOG_ID = 2;
-	String imagefile,direction;
-	Button btUploadPic;
+	private static final int UPLOAD_SIGN_DIALOG_ID = 3;
+	String imagefile,direction,signaturefile;
+	Button btUploadPic, btUploadSig, btDelivered, btPending;
+	String saved_file;
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,17 +108,21 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 
         editNote = (EditText) findViewById(R.id.editNote);
         imagecam = (ImageView) findViewById(R.id.imageCam);
-        Button btDelivered = (Button) findViewById(R.id.btDelivered);
+        imagesign = (ImageView) findViewById(R.id.imageSign);
+        btDelivered = (Button) findViewById(R.id.btDelivered);
+        btPending = (Button) findViewById(R.id.btPending);
         //Button btPickedUp = (Button) findViewById(R.id.btPickedUp);
-        Button btRescheduled = (Button) findViewById(R.id.btRescheduled);
-        Button btRevoked = (Button) findViewById(R.id.btDeliRevoked);
+        //Button btRescheduled = (Button) findViewById(R.id.btRescheduled);
+        //Button btRevoked = (Button) findViewById(R.id.btDeliRevoked);
         //Button btEnroute = (Button) findViewById(R.id.btEnroute);
-        Button btNoShow = (Button) findViewById(R.id.btNoShow);    
+        //Button btNoShow = (Button) findViewById(R.id.btNoShow);    
         //Button btDirection = (Button) findViewById(R.id.btDirection);
         Button btPosition = (Button)findViewById(R.id.btUpdateLoc);
         Button btTakePic = (Button) findViewById(R.id.btTakePic);
         Button btUploadNote = (Button) findViewById(R.id.btUploadNote);
         btUploadPic = (Button) findViewById(R.id.btUploadPic);
+        btUploadSig = (Button) findViewById(R.id.btUploadSig);
+        Button btSignature = (Button) findViewById(R.id.btSignature);
         
         Order order = ordersource.getOrder(delivery_id);
         ordersource.close();
@@ -154,9 +162,10 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         txtBuyer.setText(order.getByName());
         txtRecipient.setText(recipient.toString());
         txtPhone.setText("+" + order.getByPhone());
-        txtTotalValue.setText(formatter.format( Double.parseDouble(order.getTot_price()) ));
-        txtDeliveryCost.setText(formatter.format( Double.parseDouble(order.getDelivery_cost()) ));
-        txtCODSurcharge.setText(formatter.format( Double.parseDouble(order.getCODCost()) ));
+        //txtTotalValue.setText(formatter.format( Double.parseDouble(order.getTot_price()) ));
+        txtTotalValue.setText(formatter.format( ParseDouble(order.getTot_price()) ));
+        txtDeliveryCost.setText(formatter.format( ParseDouble(order.getDelivery_cost()) ));
+        txtCODSurcharge.setText(formatter.format( ParseDouble(order.getCODCost()) ));
         
         txtDeliveryType.setText(order.getDl_type());
         if("COD".equalsIgnoreCase(order.getDl_type()) || "CCOD".equalsIgnoreCase(order.getDl_type()) ){
@@ -168,37 +177,52 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
         Log.i("Delivery_id",delivery_id);
         
 		imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
+		signaturefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + "_sign.jpg";
 		
 		File file = new File(imagefile);		
 		
 		if(file.exists()){
 			Toast.makeText(this, "Photo found", Toast.LENGTH_SHORT).show();
-			displayPhoto(imagefile);
+			displayPhoto(imagefile, imagecam);
 		}else{
 			imagecam.setVisibility(View.GONE);
 			btUploadPic.setVisibility(View.GONE);
 		}
+
+		File sgfile = new File(signaturefile);		
+		
+		if(sgfile.exists()){
+			Toast.makeText(this, "Signature found", Toast.LENGTH_SHORT).show();
+			displayPhoto(signaturefile, imagesign);
+		}else{
+			imagesign.setVisibility(View.GONE);
+			btUploadSig.setVisibility(View.GONE);
+		}
 		
         btDelivered.setOnClickListener(this);
         //btEnroute.setOnClickListener(this);
-        btNoShow.setOnClickListener(this);
+        //btNoShow.setOnClickListener(this);
         //btPickedUp.setOnClickListener(this);
-        btRescheduled.setOnClickListener(this);
-        btRevoked.setOnClickListener(this);
+        //btRescheduled.setOnClickListener(this);
+        //btRevoked.setOnClickListener(this);
         //btDirection.setOnClickListener(this);
+        btPending.setOnClickListener(this);
         btPosition.setOnClickListener(this);
         btTakePic.setOnClickListener(this);
         btUploadNote.setOnClickListener(this);
         btUploadPic.setOnClickListener(this);
+        btUploadSig.setOnClickListener(this);
+        btSignature.setOnClickListener(this);
         
         //btTakePic.setEnabled(false);
 
         btDelivered.setEnabled(disableByStatus(last,"delivered"));
+        btPending.setEnabled(disableByStatus(last,"delivered"));
         //btEnroute.setEnabled(disableByStatus(last,"enroute"));
-        btNoShow.setEnabled(disableByStatus(last,"noshow"));
+        //btNoShow.setEnabled(disableByStatus(last,"noshow"));
         //btPickedUp.setEnabled(disableByStatus(last,"pickedup"));
-        btRescheduled.setEnabled(disableByStatus(last,"rescheduled"));
-        btRevoked.setEnabled(disableByStatus(last,"revoked"));
+        //btRescheduled.setEnabled(disableByStatus(last,"rescheduled"));
+        //btRevoked.setEnabled(disableByStatus(last,"revoked"));
         
         
         locman = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -209,6 +233,8 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		locman.requestLocationUpdates(provider, 400, 1, this);
 
         dialog = new ProgressDialog(this);
+        
+        saved_file = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/";
 
     }
     
@@ -240,27 +266,28 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		switch(v.getId()){
 			case R.id.btDelivered:
 				sendstatus.execute(new String[]{delivery_id, "delivered"});
+		        btDelivered.setEnabled(false);
+		        btPending.setEnabled(false);
+				break;
+			case R.id.btPending:
+				sendstatus.execute(new String[]{delivery_id, "pending"});
 				break;
 			/*
 			case R.id.btEnroute:
 				sendstatus.execute(new String[]{delivery_id, "enroute"});
 				break;
-			*/
 			case R.id.btNoShow:
 				sendstatus.execute(new String[]{delivery_id, "noshow"});
 				break;
-			/*
 			case R.id.btPickedUp:
 				sendstatus.execute(new String[]{delivery_id, "pickedup"});
 				break;
-			*/
 			case R.id.btRescheduled:
 				sendstatus.execute(new String[]{delivery_id, "rescheduled"});
 				break;
 			case R.id.btDeliRevoked:
 				sendstatus.execute(new String[]{delivery_id, "revoked"});
 				break;
-			/*
 			case R.id.btDirection:
 				showDialog(DIRECTION_DIALOG_ID);
 				break;
@@ -280,9 +307,25 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 				locman.getLastKnownLocation(provider);
 				txtDeliveryPos.setText("Requesting position...");
 				break;
+			case R.id.btSignature:
+				Intent signatureIntent = new Intent(this, SignatureActivity.class);
+
+				File sfolder = new File(saved_file);
+				if(!sfolder.exists()){
+					sfolder.mkdirs();
+				}
+				
+				File sfile = new File(saved_file + delivery_id + "_sign.jpg");
+				
+				if(sfile.exists()){
+					sfile.delete();
+					sfile = new File(saved_file + delivery_id + "_sign.jpg");
+				}
+				signatureIntent.putExtra("signature_file", saved_file + delivery_id + "_sign.jpg");  
+				startActivityForResult(signatureIntent, CAPTURE_SIGN_ACTIVITY_REQUEST_CODE);
+				break;
 			case R.id.btTakePic:
 				Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);  				
-				String saved_file = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/"; 				
 
 				File folder = new File(saved_file);
 				if(!folder.exists()){
@@ -301,6 +344,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 				break;
 			case R.id.btUploadPic:
 				imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
+				signaturefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + "_sign.jpg";
 				
 				File cfile = new File(imagefile);		
 				
@@ -309,7 +353,28 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 				}else{
 					Toast.makeText(this, "Photo not found", Toast.LENGTH_SHORT).show();
 				}
+				
+				/*
+				File sgfile = new File(signaturefile);
+				if(sgfile.exists()){
+					uploadPhoto(signaturefile);
+				}else{
+					Toast.makeText(this, "Signature found", Toast.LENGTH_SHORT).show();
+				}
+				*/
 				break;
+			case R.id.btUploadSig:
+				signaturefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + "_sign.jpg";
+				
+				File sgfile = new File(signaturefile);
+				if(sgfile.exists()){
+					uploadSignature(signaturefile);
+				}else{
+					Toast.makeText(this, "Signature found", Toast.LENGTH_SHORT).show();
+				}
+
+				break;
+
 			default:
 				Toast.makeText(this, "Nothing to do", Toast.LENGTH_SHORT).show();
 				break;
@@ -369,7 +434,29 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 						}
 					});
 
+		}else if(id == UPLOAD_SIGN_DIALOG_ID){
+	        builder.setTitle(R.string.uploadtitle);
+	        builder.setMessage(R.string.uploadconfirm);
+	        
+	        builder.setPositiveButton(android.R.string.ok, 
+	        		new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							uploadSignature(signaturefile);
+							//Toast.makeText(getApplicationContext(), "Ok !", Toast.LENGTH_SHORT).show();
+						}
+					});
+
+	        builder.setNegativeButton(R.string.notnow, 
+	        		new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Toast.makeText(getApplicationContext(), "Picture will be uploaded later, you may use Upload button under the picture.", Toast.LENGTH_SHORT).show();
+						}
+					});
+
 		}
+
         
         return builder.create();				
 	}
@@ -392,9 +479,10 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			}
 		}
 
-		if(last.equalsIgnoreCase("delivered") || last.equalsIgnoreCase("noshow") || last.equalsIgnoreCase("revoked") || last.equalsIgnoreCase("rescheduled")){
+		if(last.equalsIgnoreCase("delivered") || last.equalsIgnoreCase("pending") || last.equalsIgnoreCase("noshow") || last.equalsIgnoreCase("revoked") || last.equalsIgnoreCase("rescheduled")){
 			if(status.equalsIgnoreCase("pickedup") || status.equalsIgnoreCase("enroute") 
 					|| status.equalsIgnoreCase("delivered")
+					|| status.equalsIgnoreCase("pending")
 					|| status.equalsIgnoreCase("noshow")
 					|| status.equalsIgnoreCase("revoked")
 					|| status.equalsIgnoreCase("rescheduled")){
@@ -418,16 +506,18 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		    if (resultCode == RESULT_OK) {
 				try {
 					// We need to recyle unused bitmaps
+					/*
 					if (bitmap != null) {
 						bitmap.recycle();
 					}
+					*/
 					
 					imagefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + ".jpg";
 					
 					File file = new File(imagefile);
 					
 					if(file.exists()){
-						displayPhoto(imagefile);
+						displayPhoto(imagefile, imagecam);
 						imagecam.setVisibility(View.VISIBLE);
 						btUploadPic.setVisibility(View.VISIBLE);
 						showDialog(UPLOAD_DIALOG_ID);
@@ -447,17 +537,77 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		        Toast.makeText(this, "Picture was not taken", Toast.LENGTH_SHORT).show();
 		    }
 		}
+		
+		if (requestCode == CAPTURE_SIGN_ACTIVITY_REQUEST_CODE) {
+		    if (resultCode == RESULT_OK) {
+				try {
+					// We need to recyle unused bitmaps
+					/*
+					if (bitmap != null) {
+						bitmap.recycle();
+					}
+					*/
+					
+					signaturefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + "_sign.jpg";
+					
+					File file = new File(signaturefile);
+					
+					if(file.exists()){
+						displayPhoto(signaturefile, imagesign);
+						imagesign.setVisibility(View.VISIBLE);
+						btUploadSig.setVisibility(View.VISIBLE);
+						showDialog(UPLOAD_SIGN_DIALOG_ID);
+					}
+					
+				}catch(NullPointerException e){
+					e.printStackTrace();
+				}
+
+		    	
+		    	//Bitmap thumbnail = (Bitmap) data.getExtras().get();
+		    	//imagecam.setImageBitmap(thumbnail);
+		        //use imageUri here to access the image
+		    } else if (resultCode == RESULT_CANCELED) {
+		        Toast.makeText(this, "Signature was not taken", Toast.LENGTH_SHORT).show();
+		    } else {
+		        Toast.makeText(this, "Signature was not taken", Toast.LENGTH_SHORT).show();
+		    }
+		}
+		
 	}	
 	
 	private void uploadPhoto(String imagefile){
+		
+		String signaturefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + "_sign.jpg";
+		File sgfile = new File(signaturefile);
+
 		UploadPicture uploadpicture = new UploadPicture();
-		uploadpicture.execute(new String[]{delivery_id, imagefile});
+		
+		if(sgfile.exists()){
+			uploadpicture.execute(new String[]{delivery_id, imagefile, signaturefile});		
+			Log.i("upload sign", "uploading");
+		}else{
+			uploadpicture.execute(new String[]{delivery_id, imagefile});			
+		}
+		
+	}
+
+	private void uploadSignature(String signfile){
+		/*
+		String signaturefile = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/jayonex/" + delivery_id + "_sign.jpg";
+		File sgfile = new File(signaturefile);
+		*/
+		UploadPicture uploadpicture = new UploadPicture();
+
+		uploadpicture.execute(new String[]{delivery_id,"", signfile});			
+				
 	}
 	
-	private void displayPhoto(String imagefile){
+	private void displayPhoto(String imagefile, ImageView v){
         FileInputStream in;
         BufferedInputStream buf;
         try {
+						
        	    in = new FileInputStream(imagefile);
             buf = new BufferedInputStream(in);
             bitmap = BitmapFactory.decodeStream(buf);
@@ -468,7 +618,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
             //Half Scaled
             bitmap = Bitmap.createScaledBitmap(bitmap,nwidth, nheight, false);
                         
-            imagecam.setImageBitmap(bitmap);
+            v.setImageBitmap(bitmap);
                         
             if (in != null) {
             	in.close();
@@ -487,12 +637,29 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 
 		@Override
 		protected String doInBackground(String... params) {
+
+			String now = getCurrentDate();
+			
+			LogData logdata = new LogData();
+			
+			logdata.setStatus(params[1]);
+			logdata.setDeliveryId(params[0]);
+			logdata.setCaptureTime(now);
+			logdata.setDeliveryNote(editNote.getText().toString());
+			logdata.setSyncId(sync_id.toString());
+			logdata.setLatitude(latitude);
+			logdata.setLongitude(longitude);
+			
+			logdatasource.open();
+			logdatasource.saveLog(logdata);
+			logdatasource.close();			
+			
 			String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
 			String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_put_status).toString() + key;
 			String txtResult = "";
 			Integer sync_id = jexPrefs.getInt("syncsession",1);
 			
-			String now = getCurrentDate();
+			Log.i("API URL", url);
 			
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost(url);
@@ -545,23 +712,7 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-			
-			
-			
-			LogData logdata = new LogData();
-			
-			logdata.setStatus(params[1]);
-			logdata.setDeliveryId(params[0]);
-			logdata.setCaptureTime(now);
-			logdata.setDeliveryNote(editNote.getText().toString());
-			logdata.setSyncId(sync_id.toString());
-			logdata.setLatitude(latitude);
-			logdata.setLongitude(longitude);
-			
-			logdatasource.open();
-			logdatasource.saveLog(logdata);
-			logdatasource.close();
-			
+						
 			return txtResult;
 		}
 
@@ -588,7 +739,8 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 
 		@Override
 		protected String doInBackground(String... params) {
-
+			Log.i("Sign URI",params[1]);
+			
 			String key = jexPrefs.getString("devkey", getResources().getText(R.string.api_key).toString());
 			String url = getResources().getText(R.string.api_url).toString() + getResources().getText(R.string.api_upload_pic).toString() + key;
 			String txtResult = "";
@@ -597,17 +749,61 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 				HttpClient httpclient = new DefaultHttpClient();
 				HttpPost httppost = new HttpPost(url);
 				
+				float[] latlong = new float[2];
+				String phototime = "";
+				
+				if("".equalsIgnoreCase(params[1]) == false){
+					try {
+						ExifInterface exif = new ExifInterface(params[1]);
+						if(!exif.getLatLong(latlong)){
+							latlong[0] = 0F;
+							latlong[1] = 0F;
+						}
+						
+						phototime = exif.getAttribute(ExifInterface.TAG_DATETIME);
+						
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						latlong[0] = 0F;
+						latlong[1] = 0F;
+						e.printStackTrace();
+					}
+				}
+				
 				try{
-					//compress image first
-					Bitmap bm = BitmapFactory.decodeFile(params[1]);				
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		            bm.compress(CompressFormat.JPEG, 25, bos);
-		            byte[] bdata = bos.toByteArray();
-		            ByteArrayBody bbody = new ByteArrayBody(bdata, delivery_id +".jpg");
-					
 					MultipartEntity entity = new MultipartEntity();
 					entity.addPart("delivery_id", new StringBody(params[0]));
-					entity.addPart("receiverpic", bbody);
+					entity.addPart("lat", new StringBody( Float.toString(latlong[0])) );
+					entity.addPart("lon", new StringBody(Float.toString(latlong[1])) );
+					entity.addPart("timestamp", new StringBody(phototime) );
+					
+					Bitmap bm = null;
+					ByteArrayOutputStream bos;
+					//compress image first
+					if("".equalsIgnoreCase(params[1]) == false ){
+						bm = BitmapFactory.decodeFile(params[1]);				
+						bos = new ByteArrayOutputStream();
+			            bm.compress(CompressFormat.JPEG, 25, bos);
+			            byte[] bdata = bos.toByteArray();
+			            ByteArrayBody bbody = new ByteArrayBody(bdata, delivery_id +".jpg");						
+						entity.addPart("receiverpic", bbody);
+					}
+					
+					Log.i("param length", String.valueOf(params.length));
+					
+					if(params.length == 3 && params[2] != null){
+						Log.i("param 2", params[2]);
+						if(bm != null){
+							bm.recycle();														
+						}
+						bm = BitmapFactory.decodeFile(params[2]);				
+						bos = new ByteArrayOutputStream();
+			            bm.compress(CompressFormat.JPEG, 25, bos);
+			            byte[] sbdata = bos.toByteArray();
+			            ByteArrayBody sbbody = new ByteArrayBody(sbdata, delivery_id +"_sign.jpg");
+						entity.addPart("signaturepic", sbbody);						
+					}
+					
 					httppost.setEntity(entity);
 					
 					// Execute HTTP Post Request
@@ -683,6 +879,18 @@ public class DeliveryDetailActivity extends Activity implements OnClickListener,
 		}		
 	}
 
+	private double ParseDouble(String strNumber) {
+		if (strNumber != null && strNumber.length() > 0 && "".equalsIgnoreCase(strNumber) == false && strNumber.isEmpty() == false ) {
+			try {
+				return Double.parseDouble(strNumber);
+			}catch(Exception e) {
+				return 0;
+			}
+		}else{
+			return 0;
+		}
+	}
+	
 	private int checkConnection(){
 		ConnectivityManager connect =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		Integer result = 1;

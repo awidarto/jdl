@@ -34,7 +34,10 @@ public class OrderDataSource {
 			JayonDbHelper.COLUMN_DELIVERY_TYPE,
 			JayonDbHelper.COLUMN_TOTAL_VALUE,
 			JayonDbHelper.COLUMN_BUYER_ZONE,
-			JayonDbHelper.COLUMN_BUYER_CITY
+			JayonDbHelper.COLUMN_BUYER_CITY,
+			JayonDbHelper.COLUMN_SHIP_LAT,
+			JayonDbHelper.COLUMN_SHIP_LON
+			
 			
 		};
 	
@@ -118,9 +121,9 @@ public class OrderDataSource {
 		try{
 			Log.i("ProjDeliID", delivery_id);
 			String[] projArgs = new String[]{
-					delivery_id	
+					delivery_id
 				};
-			Cursor cursor = database.query(JayonDbHelper.TABLE_ORDERS, allColumns, JayonDbHelper.COLUMN_ORDER_ID  + "= ?" , projArgs , null, null,null,"1");
+			Cursor cursor = database.query(JayonDbHelper.TABLE_ORDERS, allColumns, JayonDbHelper.COLUMN_ORDER_ID  + "= ? " , projArgs , null, null,null,"1");
 
 			Log.i("RowCnt", String.valueOf(cursor.getCount()));
 			if(cursor.getCount() == 1){

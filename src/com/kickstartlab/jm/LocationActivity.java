@@ -19,6 +19,9 @@ import org.json.JSONObject;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -39,14 +42,29 @@ import android.widget.Toast;
 import android.widget.ZoomButtonsController;
 import android.widget.ZoomControls;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
+import com.google.maps.android.ui.IconGenerator;
 
-public class LocationActivity extends MapActivity implements OnClickListener,LocationListener {
+@SuppressWarnings("deprecation")
+public class LocationActivity extends FragmentActivity implements OnClickListener,LocationListener {
 	TextView textcurrentloc;
 	LocationManager locman;
 	String provider,sendResult = "";
@@ -59,11 +77,28 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
     Criteria criteria = new Criteria();
     private SharedPreferences jexPrefs;
 	private ProgressDialog dialog;
-	
+    OrderDataSource ordersource = new OrderDataSource(this);
+
+    private GoogleMap googleMap;
+    
+    static final LatLng JAKARTA = new LatLng(-6.175286, 106.827106);
+    
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.locationlayout);
+        setContentView(R.layout.routemaplayout);
         
+        textcurrentloc = (TextView) findViewById(R.id.my_location);
+        
+        GoogleMapOptions options = new GoogleMapOptions();
+        
+        try {
+            // Loading map
+            initializeMap();
+ 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*
         Button reportLocation = (Button) findViewById(R.id.btReportLocation);
         Button getmylocation = (Button) findViewById(R.id.btMyPosition);
         chkUseGps = (CheckBox)findViewById(R.id.checkForceGps);
@@ -75,12 +110,15 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
         
         chkUseGps.setOnClickListener(this);
         chkSatView.setOnClickListener(this);
+        */
 
         /*Create marker icon*/
         greenPoint = this.getResources().getDrawable(R.drawable.geo_brown);
         redPoint = this.getResources().getDrawable(R.drawable.geo_red);
         
+        
         /*Create map view*/
+        /*
         mapview = (MapView) findViewById(R.id.map);
         mapview.setBuiltInZoomControls(true);
         ZoomButtonsController zbc = mapview.getZoomButtonsController();
@@ -112,7 +150,73 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
         itemoverlay.addOverlay(overlayitem);
         mapoverlays.clear();
         mapoverlays.add(itemoverlay);
+		*/
+        ordersource.open();
+        
+        Cursor cursor = ordersource.getAllOrdersSortSeq();
 
+        Integer idxlat = cursor.getColumnIndex(JayonDbHelper.COLUMN_SHIP_LAT);
+		Integer idxlon = cursor.getColumnIndex(JayonDbHelper.COLUMN_SHIP_LON);
+        
+        if(cursor.getCount() > 0){
+        	cursor.moveToFirst();
+        	Double prevLat = 0.0;
+        	Double prevLon = 0.0;
+        	while(cursor.isAfterLast() == false){
+    			Log.i("idxlat", idxlat.toString());
+    			Log.i("idxlon", idxlon.toString());
+        		
+        		if( cursor.isNull(idxlat) || cursor.isNull(idxlon) ){
+        			Log.i("lat or lon", "is null");
+        		}else{
+        			String elat = cursor.getString(idxlat);
+            		String elon = cursor.getString(idxlon);
+            		Log.i("lat", elat);
+            		Log.i("lon", elon);
+        			    		
+            		if( "".equalsIgnoreCase(elat) || "".equalsIgnoreCase(elon) || "null".equalsIgnoreCase(elat) || "null".equalsIgnoreCase(elon) ){
+            			
+            		}else{
+                		Double dlat = Double.valueOf(elat);
+                		Double dlon = Double.valueOf(elon);
+                		String recv = cursor.getString(cursor.getColumnIndex(JayonDbHelper.COLUMN_BUYER_NAME));
+                		Integer icseq = cursor.getInt(cursor.getColumnIndex(JayonDbHelper.COLUMN_SHIP_SEQ));
+                		                		
+                		if(googleMap != null){        			
+                			if(cursor.isFirst()){
+                				prevLat = dlat;
+                				prevLon = dlon;
+                			}else{
+                				PolylineOptions popt = new PolylineOptions()
+                			     .add(new LatLng(prevLat,prevLon), new LatLng(dlat, dlon))
+                			     .width(5)
+                			     .color(Color.RED);
+                				googleMap.addPolyline(popt);
+                				prevLat = dlat;
+                				prevLon = dlon;
+                			}
+                			
+                			IconGenerator iconGen = new IconGenerator(this);
+                			iconGen.setStyle(IconGenerator.STYLE_ORANGE);
+                			
+                			String lblIcon = String.valueOf(icseq);
+                			Bitmap bmIcon = iconGen.makeIcon(lblIcon);
+                					
+                			
+                			googleMap.addMarker(new MarkerOptions()
+                				.position(new LatLng(dlat, dlon))
+                				.icon(BitmapDescriptorFactory.fromBitmap(bmIcon))
+                				.title(recv) );
+                		}        			
+            		}
+            		
+        			
+        		}
+        		cursor.moveToNext();
+        	}
+        }
+
+        ordersource.close();
         jexPrefs = this.getApplicationContext().getSharedPreferences("jexprefs", MODE_PRIVATE);
         
         locman = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -166,6 +270,38 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
 		}
 	}
 
+    /**
+     * function to load map. If map is not created it will create it for you
+     * */
+    private void initializeMap() {
+        if (googleMap == null) {
+            googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(
+                    R.id.map)).getMap();
+ 
+            // check if map is created successfully or not
+            if (googleMap == null) {
+                Toast.makeText(getApplicationContext(),
+                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
+                        .show();
+            }else{
+            	googleMap.setMyLocationEnabled(true);
+            	googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+            	googleMap.getUiSettings().setCompassEnabled(true);
+            	googleMap.getUiSettings().setTiltGesturesEnabled(true);
+            	//googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(JAKARTA, 15));
+            	//googleMap.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);
+            	
+            	CameraPosition cameraPosition = new CameraPosition.Builder()
+	                .target(JAKARTA)      // Sets the center of the map to Mountain View
+	                .zoom(11)                   // Sets the zoom
+	                //.bearing(45)                // Sets the orientation of the camera to east
+	                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+	                .build();                   // Creates a CameraPosition from the builder
+            	googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            	
+            }
+        }
+    }	
 	
 	public class SendStatusProcess extends AsyncTask<Location, Void, String>{
 
@@ -266,15 +402,14 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
 		locman.removeUpdates(this);
 	}
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
 
 	@Override
 	public void onLocationChanged(Location location) {
-        GeoPoint p = new GeoPoint((int)(location.getLatitude() * 1E6), (int)(location.getLongitude()*1E6));
+        
+		displayLocation(location);
 
+        /*
+        GeoPoint p = new GeoPoint((int)(location.getLatitude() * 1E6), (int)(location.getLongitude()*1E6)); 
         List<Overlay> mapoverlays = mapview.getOverlays();
         JayonItemOverlay itemoverlay = new JayonItemOverlay(greenPoint, this);
         OverlayItem overlayitem = new OverlayItem(p, "Jayon Rider", "I'm here");
@@ -284,7 +419,7 @@ public class LocationActivity extends MapActivity implements OnClickListener,Loc
         
         mc.animateTo(p);
         
-		displayLocation(location);
+		*/
 	}
 
 	@Override

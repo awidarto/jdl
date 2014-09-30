@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical" >
+
+	    <FrameLayout
+	        android:id="@+id/frameDetailPos"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:background="@android:color/background_light" >
+
+	        <TextView
+	            android:id="@+id/txtDetailPos"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:paddingLeft="5dp"
+	            android:text="@string/currentloc"
+	            android:textAppearance="?android:attr/textAppearanceSmall"
+	            android:textColor="@android:color/black" />
+	    </FrameLayout>
+	    <TextView
+	        android:id="@+id/txtDeliveryType"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingLeft="5dp"
+	        android:text="@string/currentloc"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textStyle="bold"
+	        android:textColor="@android:color/white" />
+
+	        <TextView
+	            android:id="@+id/lblBuyer"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:padding="2dp"
+	            android:text="@string/buyer"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	        
+	        <TextView
+	            android:id="@+id/txtBuyer"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:padding="2dp"
+	            android:text="@string/buyer"
+	            android:textStyle="bold"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	        	    	    
+	        <TextView
+	            android:id="@+id/lblRecipient"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:padding="2dp"
+	            android:text="@string/shipping"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	        
+	        <TextView
+	            android:id="@+id/txtRecipient"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:padding="2dp"
+	            android:text="@string/buyer"
+	            android:textStyle="bold"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	        
+	        <LinearLayout
+	            android:layout_height="wrap_content"
+	            android:layout_width="match_parent"
+	            android:orientation="horizontal" >
+		        <TextView
+		            android:id="@+id/lblPhone"
+		            android:layout_weight="1"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:padding="2dp"
+		            android:text="@string/phone"
+		            android:textAppearance="?android:attr/textAppearanceSmall" />
+		        
+		        <TextView
+		            android:id="@+id/txtPhone"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="2"
+		            android:gravity="left"
+		            android:padding="2dp"
+		            android:text="@string/total_value"
+		            android:textStyle="bold"
+		            android:autoLink="phone" 
+		            android:textAppearance="?android:attr/textAppearanceSmall" />
+	            					            
+	        </LinearLayout>
+	        	        
+	        <LinearLayout
+	            android:layout_height="wrap_content"
+	            android:layout_width="match_parent"
+	            android:orientation="horizontal" >
+		        <TextView
+		            android:id="@+id/lblTotalValue"
+		            android:layout_weight="1"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:padding="2dp"
+		            android:text="@string/total_value"
+		            android:textAppearance="?android:attr/textAppearanceSmall" />
+		        
+		        <TextView
+		            android:id="@+id/txtTotalValue"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="2"
+		            android:gravity="right"
+		            android:padding="2dp"
+		            android:text="@string/total_value"
+		            android:textStyle="bold"
+		            android:textAppearance="?android:attr/textAppearanceSmall" />
+	            					            
+	        </LinearLayout>
+
+	        <LinearLayout
+	            android:layout_height="wrap_content"
+	            android:layout_width="match_parent"
+	            android:orientation="horizontal" >
+		        <TextView
+		            android:id="@+id/lblDeliveryCost"
+		            android:layout_weight="1"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:padding="2dp"
+		            android:text="@string/delivery_cost"
+		            android:textAppearance="?android:attr/textAppearanceSmall" />
+		        
+		        <TextView
+		            android:id="@+id/txtDeliveryCost"
+		            android:layout_weight="2"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:padding="2dp"
+		            android:gravity="right"
+		            android:text="@string/total_value"
+		            android:textStyle="bold"
+		            android:textAppearance="?android:attr/textAppearanceSmall" />
+	            					            
+	        </LinearLayout>
+	        <LinearLayout
+	            android:layout_height="wrap_content"
+	            android:layout_width="match_parent"
+	            android:orientation="horizontal" >
+		        <TextView
+		            android:id="@+id/lblCODSurcharge"
+		            android:layout_weight="1"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:padding="2dp"
+		            android:text="@string/cod_cost"
+		            android:textAppearance="?android:attr/textAppearanceSmall" />
+		        
+		        <TextView
+		            android:id="@+id/txtCODSurcharge"
+		            android:layout_weight="2"
+		            android:layout_width="0dp"
+		            android:layout_height="wrap_content"
+		            android:gravity="right"
+		            android:padding="2dp"
+		            android:text="@string/total_value"
+		            android:textStyle="bold"
+		            android:textAppearance="?android:attr/textAppearanceSmall" />
+	            					            
+	        </LinearLayout>
+	        	        	        	        	    
+	    <ImageView
+	        android:id="@+id/imageCam"
+	        android:layout_width="match_parent"
+	        android:layout_height="100dp"
+	        android:layout_marginTop="4dp"
+	        android:contentDescription="@string/recieverphoto" />
+	    <Button
+	        android:id="@+id/btUploadPic"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/uploadpic"
+	        android:layout_gravity="center_horizontal"
+	        android:textAppearance="?android:attr/textAppearanceSmall" >
+	    </Button>
+	    
+	    <ImageView
+	        android:id="@+id/imageSign"
+	        android:layout_width="match_parent"
+	        android:layout_height="100dp"
+	        android:layout_marginTop="4dp"
+	        android:contentDescription="@string/labelsignature"	 
+	        />   	    
+	    <Button
+	        android:id="@+id/btUploadSig"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/uploadpic"
+	        android:layout_gravity="center_horizontal"
+	        android:textAppearance="?android:attr/textAppearanceSmall" >
+	    </Button>
+	    
+	    <LinearLayout
+	        android:id="@+id/frameNote"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+
+	        <EditText
+	            android:id="@+id/editNote"
+	            android:layout_width="0dp"
+	            android:layout_height="match_parent"
+	            android:layout_weight="3"
+	            android:gravity="top"
+	            android:hint="@string/noteField"
+	            android:inputType="textLongMessage|textMultiLine"
+	            android:minLines="2" />
+
+	        <Button
+	            android:id="@+id/btUploadNote"
+	            android:layout_width="0dp"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            android:text="@string/syncnote"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	    </LinearLayout>
+	    <Button
+	        android:id="@+id/btSignature"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/labelsignature"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+	    
+	    <Button
+	        android:id="@+id/btDelivered"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/delivered"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	    <Button
+	        android:id="@+id/btPending"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/pending"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+	    	    
+	    <LinearLayout
+	        android:id="@+id/framePending"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+
+	        <Button
+	            android:id="@+id/btRescheduled"
+	            android:layout_width="0dp"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            android:text="@string/rescheduled"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	        <Button
+	            android:id="@+id/btNoShow"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="@string/noshow"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	        <Button
+	            android:id="@+id/btDeliRevoked"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="@string/revoked"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	    </LinearLayout>
+
+	    <LinearLayout
+	        android:id="@+id/frameCapture"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
+
+	        <Button
+	            android:id="@+id/btUpdateLoc"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="@string/getloc"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	        <Button
+	            android:id="@+id/btTakePic"
+	            android:layout_width="0dp"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="@string/takepic"
+	            android:textAppearance="?android:attr/textAppearanceSmall" />
+	    </LinearLayout>
+
+	</LinearLayout>
+    
+</ScrollView>

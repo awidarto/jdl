@@ -3,8 +3,20 @@ package com.kickstartlab.jm;
 public class Order {
 	private long id;
 	private int seq;
-	private String delivery_id,mc_name,mc_trans_id,ship_addr,ship_dir,by_name,by_phone,rec_name,tot_price,delivery_cost,cod_cost,cod_curr,dl_type,dl_status,as_zone,as_city,by_zone, by_city;
+	private String delivery_id,mc_name,mc_trans_id,ship_addr,ship_dir,by_name,by_phone,rec_name,tot_price,delivery_cost,cod_cost,cod_curr,dl_type,dl_status,as_zone,as_date,as_city,by_zone, by_city;
 		
+	/**
+	 * @return the as_date
+	 */
+	public String getAs_date() {
+		return as_date;
+	}
+	/**
+	 * @param as_date the as_date to set
+	 */
+	public void setAs_date(String as_date) {
+		this.as_date = as_date;
+	}
 	/**
 	 * @return the as_zone
 	 */

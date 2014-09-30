@@ -32,6 +32,7 @@
 	        android:paddingLeft="5dp"
 	        android:text="@string/currentloc"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textStyle="bold"
 	        android:textColor="@android:color/white" />
 
 	        <TextView
@@ -156,7 +157,7 @@
 		            android:layout_width="0dp"
 		            android:layout_height="wrap_content"
 		            android:padding="2dp"
-		            android:text="@string/cod_cost"
+		            android:text="@string/total_charge"
 		            android:textAppearance="?android:attr/textAppearanceSmall" />
 		        
 		        <TextView
@@ -178,7 +179,6 @@
 	        android:layout_height="100dp"
 	        android:layout_marginTop="4dp"
 	        android:contentDescription="@string/recieverphoto" />
-
 	    <Button
 	        android:id="@+id/btUploadPic"
 	        android:layout_width="wrap_content"
@@ -187,7 +187,23 @@
 	        android:layout_gravity="center_horizontal"
 	        android:textAppearance="?android:attr/textAppearanceSmall" >
 	    </Button>
-
+	    
+	    <ImageView
+	        android:id="@+id/imageSign"
+	        android:layout_width="match_parent"
+	        android:layout_height="100dp"
+	        android:layout_marginTop="4dp"
+	        android:contentDescription="@string/labelsignature"	 
+	        />   	    
+	    <Button
+	        android:id="@+id/btUploadSig"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/uploadpic"
+	        android:layout_gravity="center_horizontal"
+	        android:textAppearance="?android:attr/textAppearanceSmall" >
+	    </Button>
+	    
 	    <LinearLayout
 	        android:id="@+id/frameNote"
 	        android:layout_width="match_parent"
@@ -211,7 +227,13 @@
 	            android:text="@string/syncnote"
 	            android:textAppearance="?android:attr/textAppearanceSmall" />
 	    </LinearLayout>
-
+	    <Button
+	        android:id="@+id/btSignature"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/labelsignature"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+	    
 	    <Button
 	        android:id="@+id/btDelivered"
 	        android:layout_width="match_parent"
@@ -219,36 +241,13 @@
 	        android:text="@string/delivered"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />
 
-	    <LinearLayout
-	        android:id="@+id/framePending"
+	    <Button
+	        android:id="@+id/btPending"
 	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" >
-
-	        <Button
-	            android:id="@+id/btRescheduled"
-	            android:layout_width="0dp"
-	            android:layout_height="match_parent"
-	            android:layout_weight="1"
-	            android:text="@string/rescheduled"
-	            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-	        <Button
-	            android:id="@+id/btNoShow"
-	            android:layout_width="0dp"
-	            android:layout_height="wrap_content"
-	            android:layout_weight="1"
-	            android:text="@string/noshow"
-	            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-	        <Button
-	            android:id="@+id/btDeliRevoked"
-	            android:layout_width="0dp"
-	            android:layout_height="wrap_content"
-	            android:layout_weight="1"
-	            android:text="@string/revoked"
-	            android:textAppearance="?android:attr/textAppearanceSmall" />
-	    </LinearLayout>
-
+	        android:layout_height="wrap_content"
+	        android:text="@string/pending"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
+	    	    
 	    <LinearLayout
 	        android:id="@+id/frameCapture"
 	        android:layout_width="match_parent"

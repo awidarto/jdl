@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:padding="6dip" >
+
     <TextView
         android:id="@+id/delivery_date"
         android:layout_width="wrap_content"
@@ -10,20 +11,23 @@
         android:paddingLeft="3dp"
         android:text="2012-03-12"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
     <TextView
         android:id="@+id/merchant_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/delivery_date"
         android:layout_below="@+id/delivery_date"
         android:paddingLeft="3dp"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
     <TextView
         android:id="@+id/buyer_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="3dp"
         android:layout_below="@+id/merchant_name"
+        android:paddingLeft="3dp"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
     
